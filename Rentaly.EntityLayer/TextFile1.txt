@@ -1,0 +1,3 @@
+﻿bir görüntüden inputları doldurmasını beklicez 
+
+abstract interface bütün entityler için 
