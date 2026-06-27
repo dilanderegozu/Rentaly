@@ -10,4 +10,12 @@
     <ProjectReference Include="..\Rentaly.EntityLayer\Rentaly.EntityLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Concrete\" />
+    <Folder Include="EntityFramework\" />
+    <Folder Include="Context\" />
+    <Folder Include="UnitOfWorkDesignPattern\" />
+    <Folder Include="RepositoryDesignPattern\" />
+  </ItemGroup>
+
 </Project>
