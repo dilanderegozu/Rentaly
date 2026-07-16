@@ -1,0 +1,24 @@
+﻿@model List<Rentaly.EntityLayer.Entities.Testimonial>
+
+<section id="section-testimonials" class="no-top no-bottom">
+    <div class="container-fluid">
+        <div class="row g-2 p-2 align-items-center">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-4">
+                    <div class="de-image-text" style="height: 600px; display: flex; flex-direction: column;">
+                        <div class="d-text" style="flex-grow: 1;">
+                            <div class="d-quote id-color"><i class="fa fa-quote-right"></i></div>
+                            <h4>@item.Title</h4>
+                            <blockquote>
+                                @item.Comment
+                                <span class="by">@item.Name @item.Surname</span>
+                            </blockquote>
+                        </div>
+                        <img src="@item.ImageUrl" style="height: 1000px; width: 100%; object-fit: cover;" class="img-fluid" alt="">
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

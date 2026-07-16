@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Rentaly.BusinessLayer.Abstract
+namespace Rentaly.Businesslayer.Abstract
 {
-    public interface IRentalService : IGenericService<Rental>
+    public interface IRentalService:IGenericService<Rental>
     {
-     
     }
 }

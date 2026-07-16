@@ -1,0 +1,82 @@
+﻿
+<!DOCTYPE html>
+<html lang="zxx">
+@await Component.InvokeAsync("_DefaultHeadComponentPartial")
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<body onload="initialize()">
+    <div id="wrapper">
+
+        @await Component.InvokeAsync("_DefaultNavbarComponentPartial")
+
+       
+        <div class="no-bottom no-top" id="content">
+            <div id="top"></div>
+
+           @RenderBody()
+        
+
+        </div>
+
+    
+        @await Component.InvokeAsync("_DefaultFooterComponentPartial")
+        @await Component.InvokeAsync("_DefaultScriptComponentPartial")
+    </div>
+
+    <style>
+
+            html, body {
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow-x: hidden;
+            }
+
+
+     
+            header {
+                top: 0 !important;
+                margin: 0 !important;
+            }
+
+            #content {
+                padding-top: 0 !important;
+            }
+
+            section:not(#section-hero) {
+                padding: 80px 0;
+            }
+
+              
+            #section-call-to-action,
+            section.call-to-action,
+            .de_light {
+                padding-bottom: 0 !important;
+                margin-bottom: 0 !important;
+            }
+
+            footer {
+                margin-top: 0 !important;
+                padding-top: 60px !important;
+                border-top: none !important;
+            }
+
+       
+            .subfooter {
+                padding: 15px 0 !important;
+                background: #111 !important;
+            }
+
+       
+            .spacer-single, .spacer-double, .spacer-60, .spacer-20 {
+                display: none !important;
+            }
+
+   
+            #wrapper {
+                width: 100%;
+                overflow: hidden;
+            }
+    </style>
+    @RenderSection("Script",required:false)
+</body>
+</html>

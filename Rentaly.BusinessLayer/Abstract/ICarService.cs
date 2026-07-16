@@ -1,9 +1,16 @@
 ﻿using Rentaly.EntityLayer.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Rentaly.BusinessLayer.Abstract
+namespace Rentaly.Businesslayer.Abstract
 {
-    public interface ICarService : IGenericService<Car>
+    public interface ICarService:IGenericService<Car>
     {
-        Task<List<Car>> TGetAllCarsWithCategoryAsync();
+        Task<List<Car>> TGetAllCarWithCategoryAsync();
+        List<Car> TGetCarsByCategoryId(int id);
+        Task<Car> GetCarWithDetailsByIdAsync(int id);
     }
 }

@@ -1,0 +1,202 @@
+﻿@model List<Rentaly.EntityLayer.Entities.Contact>
+<style>
+   
+    html, body {
+        margin: 0;
+        padding: 0;
+    }
+
+
+    header.has-topbar {
+        position: absolute !important;
+        width: 100% !important;
+        top: 0 !important;
+        left: 0 !important;
+        z-index: 9999 !important;
+        background: transparent !important;
+        border: none !important;
+        transition: all 0.3s ease-in-out;
+    }
+
+   
+    #topbar {
+        background: #111111 !important;
+        padding: 5px 0 !important; 
+        border: none !important;
+        margin: 0 !important;
+    }
+
+    .topbar-widget a, .social-icons i {
+        color: #ffffff !important;
+        font-size: 12px; 
+        text-decoration: none;
+    }
+
+    .de-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0 !important; 
+        background: transparent !important;
+        transition: all 0.3s ease;
+    }
+
+    .de-flex {
+        min-height: 0 !important;
+        height: auto !important;
+        padding: 8px 0 !important;
+    }
+
+    .logo-col {
+        flex: 1;
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    #logo img {
+        height: 32px !important;
+        transition: all 0.3s ease;
+    }
+  
+    .menu-col {
+        flex: 2;
+        display: flex;
+        justify-content: center;
+    }
+
+    #mainmenu {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        gap: 20px;
+    }
+
+        #mainmenu li a {
+            color: #ffffff !important;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            text-decoration: none;
+        }
+
+   
+    .btn-col {
+        flex: 1;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .btn-main {
+        background-color: #2ecc71;
+        color: white;
+        padding: 6px 18px !important; 
+        border-radius: 4px;
+        font-weight: bold;
+        font-size: 13px;
+        text-decoration: none;
+    }
+
+   
+    header.sticky-down {
+        position: fixed !important;
+        background: rgba(0, 0, 0, 0.95) !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+        header.sticky-down #topbar {
+            display: none !important; 
+        }
+
+        header.sticky-down .de-flex {
+            padding: 5px 0 !important; 
+        }
+
+    header.sticky-up {
+        position: fixed !important;
+        transform: translateY(-100%);
+    }
+</style>
+
+<header id="mainHeader" class="has-topbar">
+    <div id="topbar">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                 
+                    
+                        <div class="topbar-left" style="display: flex; gap: 15px;">
+                        <div class="topbar-widget"><a href="#"><i class="fa fa-phone"></i>+208 333 9296</a></div>
+                        <div class="topbar-widget"><a href="#"><i class="fa fa-envelope"></i>contact@rentaly.com</a></div>
+                        <div class="topbar-widget"><a href="#"><i class="fa fa-clock-o"></i>Mon - Fri 08.00 - 18.00</a></div>
+                        </div>
+                   
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="social-icons" style="display: flex; gap: 12px; justify-content: flex-end;">
+                        <a href="#" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+                        <a href="#" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" target="_blank"><i class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="de-flex">
+                    <div class="logo-col">
+                        <div id="logo">
+                            <a href="/">
+                                <img src="/RentalyHTML/images/logo-light.png" alt="Logo">
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="menu-col">
+                        <ul id="mainmenu">
+                            <li><a href="/Default/Index/">AnaSayfa</a></li>
+                            <li><a href="/Car/Index/">Arabalar</a></li>
+                            <li><a href="/News/Index/">Haberler</a></li>
+                            <li><a href="/Booking/Index/">Rezervasyon</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="btn-col">
+                        <a href="/Car/CarList/" class="btn-main">Giriş Yap</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<script>
+    let lastScroll = 0;
+    const header = document.getElementById("mainHeader");
+
+    window.addEventListener("scroll", () => {
+        const currentScroll = window.pageYOffset;
+
+        if (currentScroll <= 50) {
+            header.classList.remove("sticky-up", "sticky-down");
+            header.style.position = "absolute";
+            return;
+        }
+
+        if (currentScroll > lastScroll && !header.classList.contains("sticky-up")) {
+      
+            header.classList.remove("sticky-down");
+            header.classList.add("sticky-up");
+        } else if (currentScroll < lastScroll && header.classList.contains("sticky-up")) {
+      
+            header.classList.remove("sticky-up");
+            header.classList.add("sticky-down");
+        }
+        lastScroll = currentScroll;
+    });
+</script>

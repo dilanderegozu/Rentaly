@@ -1,0 +1,146 @@
+﻿@model Rentaly.WebUI.Models.CarDetailsViewModel
+@{
+    Layout = "~/Views/Shared/_RentalyLayout.cshtml";
+}
+<div class="no-bottom no-top zebra" id="content">
+    <div id="top"></div>
+
+    <!-- section begin -->
+    <section id="subheader" class="jarallax text-light">
+        <img src="/RentalyHTML/images/background/2.jpg" class="jarallax-img" alt="">
+        <div class="center-y relative text-center">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <h1>@Model.Car.Brand?.BrandName @Model.Car.CarModel?.ModelName</h1>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- section close -->
+
+    <section id="section-car-details">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-6">
+                    <div class="d-img">
+                        <img src="@Model.Car.ImageUrl" class="img-fluid rounded" alt="@Model.Car.Brand?.BrandName @Model.Car.CarModel?.ModelName">
+                    </div>
+                </div>
+
+                <div class="col-lg-3">
+                    <h3>@Model.Car.Brand?.BrandName @Model.Car.CarModel?.ModelName</h3>
+                    <p>@Model.Car.Description</p>
+
+                    <div class="spacer-10"></div>
+
+                    <h4>Teknik Özellikler</h4>
+                    <div class="de-spec">
+                        <div class="d-row">
+                            <span class="d-title">Kategori</span>
+                            <span class="d-value">@Model.Car.Category?.CategoryName</span>
+                        </div>
+                        <div class="d-row">
+                            <span class="d-title">Araç Tipi</span>
+                            <span class="d-value">@Model.Car.VehicleType?.VehicleTypeName</span>
+                        </div>
+                        <div class="d-row">
+                            <span class="d-title">Koltuk</span>
+                            <span class="d-value">@Model.Car.SeatCount kişi</span>
+                        </div>
+                        <div class="d-row">
+                            <span class="d-title">Bagaj</span>
+                            <span class="d-value">@Model.Car.LuggageCount adet</span>
+                        </div>
+                        <div class="d-row">
+                            <span class="d-title">Yakıt Tipi</span>
+                            <span class="d-value">@Model.Car.FuelType</span>
+                        </div>
+                        <div class="d-row">
+                            <span class="d-title">Motor Hacmi</span>
+                            <span class="d-value">@Model.Car.EngineCapacity cc</span>
+                        </div>
+                        <div class="d-row">
+                            <span class="d-title">Model Yılı</span>
+                            <span class="d-value">@Model.Car.Year</span>
+                        </div>
+                        <div class="d-row">
+                            <span class="d-title">Kilometre</span>
+                            <span class="d-value">@Model.Car.Kilometer.ToString("N0") km</span>
+                        </div>
+                        <div class="d-row">
+                            <span class="d-title">Plaka</span>
+                            <span class="d-value">@Model.Car.PlateNumber</span>
+                        </div>
+                        <div class="d-row">
+                            <span class="d-title">Şube</span>
+                            <span class="d-value">@Model.Car.Branch?.BranchName</span>
+                        </div>
+                        <div class="d-row">
+                            <span class="d-title">Durum</span>
+                            <span class="d-value">@(Model.Car.IsAvailable ? "Müsait" : "Müsait Değil")</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-3">
+                    <div class="de-price text-center">
+                        Günlük ücret
+                        <h3>@Model.Car.DailyPrice.ToString("C0")</h3>
+                    </div>
+                    <div class="spacer-30"></div>
+
+                    <div class="de-box mb25">
+                        <form name="contactForm" id="contact_form" method="post" action="/Booking/Create">
+                            <h4>Bu Aracı Rezerve Et</h4>
+
+                            <div class="spacer-20"></div>
+
+                            <input type="hidden" name="CarId" value="@Model.Car.CarId">
+
+                            <div class="row">
+                                <div class="col-lg-12 mb20">
+                                    <h5>Alış Şubesi</h5>
+                                    <select name="PickUpBranchId" class="form-control custom-input">
+                                        @foreach (var branch in Model.Branches)
+                                        {
+                                            <option value="@branch.BranchId" selected="@(branch.BranchId == Model.Car.BranchId)">
+                                                @branch.BranchName
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-lg-12 mb20">
+                                    <h5>Alış Tarihi</h5>
+                                    <input type="date" name="PickUpDate" class="form-control" required>
+                                </div>
+
+                                <div class="col-lg-12 mb20">
+                                    <h5>Teslim Tarihi</h5>
+                                    <input type="date" name="DropOffDate" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <input type="submit" id="send_message" value="Rezervasyon Yap" class="btn-main btn-fullwidth">
+
+                            <div class="clearfix"></div>
+                        </form>
+                    </div>
+
+                    <div class="de-box">
+                        <h4>Paylaş</h4>
+                        <div class="de-color-icons">
+                            <span><i class="fa fa-instagram fa-lg"></i></span>
+                            <span><i class="fa fa-linkedin fa-lg"></i></span>
+                            <span><i class="fa fa-whatsapp fa-lg"></i></span>
+                            <span><i class="fa fa-envelope fa-lg"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

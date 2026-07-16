@@ -12,6 +12,6 @@ namespace Rentaly.EntityLayer.Entities
         public string Address { get; set; }
 
         public List<Car> Cars { get; set; }
-
+ 
     }
 }

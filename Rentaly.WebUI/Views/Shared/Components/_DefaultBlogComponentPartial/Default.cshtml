@@ -1,0 +1,133 @@
+﻿@model List<Rentaly.EntityLayer.Entities.LatestNew>
+
+<section id="section-news" style="padding: 60px 0;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3 text-center">
+                <h2>Son Haberlerimiz</h2>
+                <p>En güncel haberlerimiz, içgörülerimiz ve analizlerimizle gelişmelerden haberdar kalın.</p>
+                <div class="spacer-20"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-4 mb30 d-flex">
+                    <div class="bloglist-custom-card w-100">
+                        <div class="post-content-wrapper h-100 d-flex flex-column">
+
+                            <div class="post-image-container">
+                                <div class="news-date-badge">
+                                    @item.CreatedDate.ToString("dd MMMM", new System.Globalization.CultureInfo("tr-TR"))
+                                </div>
+                                <img alt="@item.Title" src="@item.ImageUrl" class="news-fit-img">
+                                <div class="img-bottom-shadow"></div>
+                            </div>
+
+                            <div class="post-text-body d-flex flex-column flex-grow-1">
+                                <h4 class="news-title">
+                                    <a href="news-single.html">@item.Title</a>
+                                </h4>
+                                <p class="news-description">@item.Description</p>
+
+                                <div class="mt-auto">
+                                    <a class="btn-main" href="#">Daha Fazlasını Oku</a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<style>
+   
+    .bloglist-custom-card {
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border-bottom: 4px solid #28a745; 
+        transition: transform 0.3s ease;
+    }
+
+        .bloglist-custom-card:hover {
+            transform: translateY(-5px);
+        }
+
+ 
+    .post-image-container {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9; 
+        overflow: hidden;
+    }
+
+    .news-fit-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; 
+        display: block;
+    }
+
+ 
+    .news-date-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background-color: #28a745;
+        color: #fff;
+        padding: 7px 15px;
+        border-radius: 6px;
+        z-index: 5;
+        font-weight: bold;
+        font-size: 14px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+
+    .post-text-body {
+        padding: 25px;
+    }
+
+    .news-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 12px;
+    }
+
+        .news-title a {
+            text-decoration: none;
+            color: #222;
+        }
+
+    .news-description {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .mt-auto {
+        margin-top: auto !important;
+    }
+
+ 
+    .img-bottom-shadow {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 40%;
+        background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.7));
+        pointer-events: none;
+    }
+
+    .mb30 {
+        margin-bottom: 30px;
+    }
+</style>

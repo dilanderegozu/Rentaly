@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Rentaly.BusinessLayer.Abstract;
+using Rentaly.Businesslayer.Abstract;
 using Rentaly.EntityLayer.Entities;
 
 namespace Rentaly.WebUI.Controllers

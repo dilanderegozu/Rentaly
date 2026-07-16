@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Rentaly.BusinessLayer.Abstract;
+using Rentaly.Businesslayer.Abstract;
 using Rentaly.BusinessLayer.ValidationRules;
 using Rentaly.EntityLayer.Entities;
 

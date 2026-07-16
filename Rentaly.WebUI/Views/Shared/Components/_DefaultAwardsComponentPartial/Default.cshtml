@@ -1,0 +1,72 @@
+﻿@model List<Rentaly.EntityLayer.Entities.Award>
+<style>
+   
+    .service-box-custom {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; 
+        padding: 20px;
+        transition: 0.3s;
+    }
+
+
+    .icon-wrapper-square {
+        width: 80px; 
+        height: 80px; 
+        background-color: #26d120 !important; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px; 
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(38, 209, 32, 0.3);
+        transition: 0.3s;
+    }
+
+        
+        .icon-wrapper-square i {
+            font-size: 35px !important; 
+            color: white !important;
+            margin: 0 !important;
+        }
+
+
+    .service-box-custom:hover .icon-wrapper-square {
+        transform: translateY(-5px);
+        background-color: #1a9e16 !important; 
+    }
+
+    .service-box-custom h4 {
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .service-box-custom p {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+</style>
+
+<section class="text-light jarallax" aria-label="section">
+    <img src="/wwroot/RentalyHTML/images/background/3.jpg" alt="" class="jarallax-img">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-3">
+                <h1 style="font-weight: 800; line-height: 1.2;">Ödüllerimiz</h1>
+                <div class="spacer-20"></div>
+            </div>
+            @foreach (var item in Model)
+            {
+                <div class="col-md-3">
+                    <div class="service-box-custom">
+                    <div class="icon-wrapper-square">
+                        <i class="@item.Icon"></i>
+                    </div>
+                    <h4>@item.Title</h4>
+                    <p>@item.Desxription</p>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</section>

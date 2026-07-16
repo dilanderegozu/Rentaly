@@ -1,10 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+		<NoWarn>$(NoWarn);NU1903</NoWarn>
+	</PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
@@ -23,11 +25,21 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Rentaly.BusinessLayer\Rentaly.BusinessLayer.csproj" />
+    <ProjectReference Include="..\Rentaly.DataAccessLayer\Rentaly.DataAccessLayer.csproj" />
+    <ProjectReference Include="..\Rentaly.DtoLayer\Rentaly.DtoLayer.csproj" />
+    <ProjectReference Include="..\Rentaly.EntityLayer\Rentaly.EntityLayer.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Admin\Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\RentalyHTML\fonts\et-line-font\.DS_Store" />
+    <None Include="wwwroot\RentalyHTML\fonts\et-line-font\fonts\.DS_Store" />
+    <None Include="wwwroot\RentalyHTML\vendor\phpmailer\phpmailer\.github\ISSUE_TEMPLATE.md" />
+    <None Include="wwwroot\RentalyHTML\vendor\phpmailer\phpmailer\.github\PULL_REQUEST_TEMPLATE.md" />
   </ItemGroup>
 
 </Project>

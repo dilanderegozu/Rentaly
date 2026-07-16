@@ -9,7 +9,7 @@ namespace Rentaly.DataAccessLayer.RepositoryDesignPattern
 {
     public class GenericRepository<T> : IGenericDal<T> where T : class
     {
-        private readonly RentalyContext _context;
+        protected readonly RentalyContext _context;
 
         public GenericRepository(RentalyContext context)
         {

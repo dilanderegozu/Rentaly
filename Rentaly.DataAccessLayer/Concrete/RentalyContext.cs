@@ -15,12 +15,20 @@ namespace Rentaly.DataAccessLayer.Concrete
         }
 
         public DbSet<Branch> Branches { get; set; }
-        public DbSet<Brand> Brandes { get; set; }
+        public DbSet<Brand> Brands { get; set; }
         public DbSet<Car> Cars { get; set; }
         public DbSet<CarModel> CarModels { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Customer> Customers    { get; set; }
+        public DbSet<Customer> Customers { get; set; }
         public DbSet<Rental> Rentals { get; set; }
+        public DbSet<OurFeature> OurFeatures { get; set; }
+        public DbSet<Award> Awards { get; set; }
+        public DbSet<LatestNew> LatestNews { get; set; }
+        public DbSet<Testimonial> Testimonials { get; set; }
+        public DbSet<FAQ> FAQs { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
+        public DbSet<VehicleType> VehicleTypes { get; set; }
+       
     }
 }
 

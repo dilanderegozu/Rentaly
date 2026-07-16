@@ -3,26 +3,45 @@ using Rentaly.DataAccessLayer.Abstract;
 using Rentaly.DataAccessLayer.Concrete;
 using Rentaly.DataAccessLayer.RepositoryDesignPattern;
 using Rentaly.EntityLayer.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Rentaly.DataAccessLayer.EntityFramework
+public class EfCarDal : GenericRepository<Car>, ICarDal
 {
-    public class EfCarDal : GenericRepository<Car>, ICarDal
+    public EfCarDal(RentalyContext context) : base(context)
     {
-        public EfCarDal(RentalyContext context) : base(context)
-        {
-        }
+    }
 
-        public async Task<List<Car>> GetAllCarsWithCategoryAsync()
-        {
-            var context= new RentalyContext();
-            var values=await context.Cars.Include(c => c.Category).ToListAsync();
+    public List<Car> GetCarsByCategoryId(int id)
+    {
+        return _context.Cars
+            .Where(x => x.CategoryId == id)
+            .Include(x => x.Category)
+            .ToList();
+    }
 
-            return values;
-        }
+    public async Task<List<Car>> GetAllCarWithCategoryAsync()
+    {
+        return await _context.Cars
+            .Include(x => x.Category)
+            .ToListAsync();
+    }
 
-      
+    public async Task<List<Car>> TGetListAsync()
+    {
+        return await _context.Cars
+            .Include(c => c.Brand)
+            .Include(c => c.CarModel)
+            .Include(c => c.Category)
+            .Include(c => c.VehicleType)
+            .ToListAsync();
+    }
+
+    public async Task<Car> GetCarWithDetailsByIdAsync(int id)
+    {
+        return await _context.Cars
+            .Include(c => c.Brand)
+            .Include(c => c.CarModel)
+            .Include(c => c.Category)
+            .Include(c => c.VehicleType)
+            .FirstOrDefaultAsync(c => c.CarId == id);
     }
 }

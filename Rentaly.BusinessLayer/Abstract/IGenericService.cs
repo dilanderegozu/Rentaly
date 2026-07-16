@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace Rentaly.BusinessLayer.Abstract
+namespace Rentaly.Businesslayer.Abstract
 {
-    public interface IGenericService<T> where T:class
+    public interface IGenericService<T> where T : class
     {
         Task TInsertAsync(T entity);
         Task TDeleteAsync(int id);

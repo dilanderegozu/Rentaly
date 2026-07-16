@@ -7,11 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Container\" />
-  </ItemGroup>
-
-  <ItemGroup>
-	  <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
@@ -19,7 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Rentaly.DataAccessLayer\Rentaly.DataAccessLayer.csproj" />
-    <ProjectReference Include="..\Rentaly.DtoLayer\Rentaly.DtoLayer.csproj" />
   </ItemGroup>
 
 </Project>

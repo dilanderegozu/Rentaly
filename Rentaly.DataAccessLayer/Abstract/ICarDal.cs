@@ -1,12 +1,17 @@
 ﻿using Rentaly.EntityLayer.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Rentaly.DataAccessLayer.Abstract
 {
-    public interface ICarDal :IGenericDal<Car>
+    public interface ICarDal : IGenericDal<Car>
     {
-        Task<List<Car>> GetAllCarsWithCategoryAsync();
+        Task<List<Car>> GetAllCarWithCategoryAsync();
+        List<Car> GetCarsByCategoryId(int id);
+        Task<List<Car>> TGetListAsync();
+        Task<Car> GetCarWithDetailsByIdAsync(int id);
     }
 }

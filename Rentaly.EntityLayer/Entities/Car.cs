@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Rentaly.EntityLayer.Entities
 {
@@ -10,7 +12,9 @@ namespace Rentaly.EntityLayer.Entities
         public string PlateNumber { get; set; }
         public string VIN { get; set; } 
         public int BrandId { get; set; }
-        public int ModelId { get; set; }
+        public Brand Brand { get; set; }
+        public int CarModelId { get; set; }
+        public CarModel CarModel { get; set; }
         public int CategoryId { get; set; }
         public Category Category { get; set; }
         public int BranchId { get; set; }
@@ -21,12 +25,15 @@ namespace Rentaly.EntityLayer.Entities
         public decimal DepositAmount { get; set; }
         public bool IsAvailable { get; set; }
         public bool IsActive { get; set; }
+
         public string ImageUrl { get; set; }
         public int SeatCount { get; set; }
         public int LuggageCount { get; set; }
         public string FuelType { get; set; }
-        //public string TransmissionType { get; set; }
-
+        public string Description { get; set; }
+        public int VehicleTypeId { get; set; }
+        public int EngineCapacity { get; set; }
+        public VehicleType VehicleType { get; set; }
 
     }
 }

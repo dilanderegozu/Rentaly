@@ -1,0 +1,178 @@
+﻿@model Rentaly.WebUI.Models.CarListViewModel
+@{
+    Layout = "~/Views/Shared/_RentalyLayout.cshtml";
+}
+<div class="no-bottom no-top zebra" id="content">
+    <div id="top"></div>
+
+    <!-- section begin -->
+    <section id="subheader" class="jarallax text-light">
+        <img src="/RentalyHTML/images/background/2.jpg" class="jarallax-img" alt="">
+        <div class="center-y relative text-center">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <h1>Araçlar</h1>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- section close -->
+
+    <section id="section-cars">
+        <div class="container">
+            <form method="get" action="/Car/Index">
+                <div class="row">
+                    <div class="col-lg-3">
+
+                        <div class="item_filter_group">
+                            <h4>Araç Tipi</h4>
+                            <div class="de_form">
+                                @foreach (var type in Model.VehicleTypes)
+                                {
+                                    bool isChecked = Model.Filter.VehicleTypeIds.Contains(type.VehicleTypeId);
+                                    <div class="de_checkbox">
+                                        <input id="vtype-@type.VehicleTypeId" name="VehicleTypeIds" type="checkbox"
+                                               value="@type.VehicleTypeId" @(isChecked ? "checked" : "")>
+                                        <label for="vtype-@type.VehicleTypeId">@type.VehicleTypeName</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="item_filter_group">
+                            <h4>Araç Gövde Tipi</h4>
+                            <div class="de_form">
+                                @foreach (var cat in Model.Categories)
+                                {
+                                    bool isChecked = Model.Filter.CategoryIds.Contains(cat.CategoryId);
+                                    <div class="de_checkbox">
+                                        <input id="cat-@cat.CategoryId" name="CategoryIds" type="checkbox"
+                                               value="@cat.CategoryId" @(isChecked ? "checked" : "")>
+                                        <label for="cat-@cat.CategoryId">@cat.CategoryName</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="item_filter_group">
+                            <h4>Koltuk Sayısı</h4>
+                            <div class="de_form">
+                                @{
+                                    var seatOptions = new[] { 2, 4, 6, 7 };
+                                }
+                                @foreach (var seat in seatOptions)
+                                {
+                                    bool isChecked = Model.Filter.SeatCounts.Contains(seat);
+                                    <div class="de_checkbox">
+                                        <input id="seat-@seat" name="SeatCounts" type="checkbox"
+                                               value="@seat" @(isChecked ? "checked" : "")>
+                                        <label for="seat-@seat">@(seat >= 7 ? "6+ seats" : $"{seat} seats")</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="item_filter_group">
+                            <h4>Fiyat</h4>
+
+                            <div class="price-input">
+                                <div class="field">
+                                    <span>Min</span>
+                                    <input type="number" name="MinPrice" class="input-min"
+                                           min="0" step="1" value="@Model.Filter.MinPrice">
+                                </div>
+                                <div class="field">
+                                    <span>Max</span>
+                                    <input type="number" name="MaxPrice" class="input-max"
+                                           min="0" step="1" value="@Model.Filter.MaxPrice">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-main w-100 mt-3">Filtrele</button>
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-9">
+                        <div class="row">
+                            @if (!Model.Cars.Any())
+                            {
+                                <p>Seçtiğiniz kriterlere uygun araç bulunamadı.</p>
+                            }
+                            @foreach (var car in Model.Cars)
+                            {
+                                <div class="col-xl-4 col-lg-6">
+                                    <div class="de-item mb30">
+                                        <div class="d-img">
+                                            <img src="@car.ImageUrl" class="img-fluid" alt="">
+                                        </div>
+                                        <div class="d-info">
+                                            <div class="d-text">
+                                                <h4>@car.Brand.BrandName @car.CarModel.ModelName</h4>
+                                                <div class="d-atr-group">
+                                                    <span class="d-atr"><img src="/RentalyHTML/images/icons/1-green.svg" alt="">@car.SeatCount</span>
+                                                    <span class="d-atr"><img src="/RentalyHTML/images/icons/2-green.svg" alt="">@car.LuggageCount</span>
+                                                    <span class="d-atr"><img src="/RentalyHTML/images/icons/4-green.svg" alt="">@car.Category.CategoryName</span>
+                                                </div>
+                                                <div class="d-price">
+                                                    <div class="price-text">
+                                                        Günlük ücret <span>@car.DailyPrice.ToString("C0")</span>
+                                                    </div>
+                                                    <a class="btn-main" href="/Car/Details/@car.CarId">Şimdi Kirala</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+			
+</div>
+<style>
+    .price-input {
+        display: flex;
+        gap: 12px;
+        margin: 15px 0;
+    }
+
+        .price-input .field {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+            .price-input .field span {
+                font-size: 12px;
+                font-weight: 700;
+                color: #1c2c52;
+            }
+
+        .price-input input {
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1c2c52;
+            width: 100%;
+        }
+
+            .price-input input:focus {
+                outline: none;
+                border-color: #26d120;
+                box-shadow: 0 0 0 3px rgba(38, 209, 32, 0.15);
+            }
+</style>
+
+<script src="/RentalyHTML/js/plugins.js"></script>
+<script src="/RentalyHTML/js/designesia.js"></script>

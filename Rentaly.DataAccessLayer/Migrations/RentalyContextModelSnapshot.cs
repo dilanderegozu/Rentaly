@@ -22,6 +22,31 @@ namespace Rentaly.DataAccessLayer.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Rentaly.EntityLayer.Entities.Award", b =>
+                {
+                    b.Property<int>("AwardId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AwardId"));
+
+                    b.Property<string>("Desxription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AwardId");
+
+                    b.ToTable("Awards");
+                });
+
             modelBuilder.Entity("Rentaly.EntityLayer.Entities.Branch", b =>
                 {
                     b.Property<int>("BranchId")
@@ -65,7 +90,7 @@ namespace Rentaly.DataAccessLayer.Migrations
 
                     b.HasKey("BrandId");
 
-                    b.ToTable("Brandes");
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("Rentaly.EntityLayer.Entities.Car", b =>
@@ -82,6 +107,9 @@ namespace Rentaly.DataAccessLayer.Migrations
                     b.Property<int>("BrandId")
                         .HasColumnType("int");
 
+                    b.Property<int>("CarModelId")
+                        .HasColumnType("int");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
@@ -90,6 +118,13 @@ namespace Rentaly.DataAccessLayer.Migrations
 
                     b.Property<decimal>("DepositAmount")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EngineCapacity")
+                        .HasColumnType("int");
 
                     b.Property<string>("FuelType")
                         .IsRequired()
@@ -111,9 +146,6 @@ namespace Rentaly.DataAccessLayer.Migrations
                     b.Property<int>("LuggageCount")
                         .HasColumnType("int");
 
-                    b.Property<int>("ModelId")
-                        .HasColumnType("int");
-
                     b.Property<string>("PlateNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -125,6 +157,9 @@ namespace Rentaly.DataAccessLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("VehicleTypeId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Year")
                         .HasColumnType("int");
 
@@ -132,7 +167,13 @@ namespace Rentaly.DataAccessLayer.Migrations
 
                     b.HasIndex("BranchId");
 
+                    b.HasIndex("BrandId");
+
+                    b.HasIndex("CarModelId");
+
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("VehicleTypeId");
 
                     b.ToTable("Cars");
                 });
@@ -172,6 +213,31 @@ namespace Rentaly.DataAccessLayer.Migrations
                     b.HasKey("CategoryId");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Rentaly.EntityLayer.Entities.Contact", b =>
+                {
+                    b.Property<int>("ContactId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContactId"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ContactId");
+
+                    b.ToTable("Contacts");
                 });
 
             modelBuilder.Entity("Rentaly.EntityLayer.Entities.Customer", b =>
@@ -214,6 +280,132 @@ namespace Rentaly.DataAccessLayer.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("Rentaly.EntityLayer.Entities.FAQ", b =>
+                {
+                    b.Property<int>("FAQId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FAQId"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("FAQId");
+
+                    b.ToTable("FAQs");
+                });
+
+            modelBuilder.Entity("Rentaly.EntityLayer.Entities.LatestNew", b =>
+                {
+                    b.Property<int>("LatestNewId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LatestNewId"));
+
+                    b.Property<string>("Author")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("LatestNewId");
+
+                    b.ToTable("LatestNews");
+                });
+
+            modelBuilder.Entity("Rentaly.EntityLayer.Entities.OurFeature", b =>
+                {
+                    b.Property<int>("OurFeatureId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OurFeatureId"));
+
+                    b.Property<string>("Description1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description3")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description4")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Icon1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Icon2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Icon3")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Icon4")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title3")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title4")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("OurFeatureId");
+
+                    b.ToTable("OurFeatures");
+                });
+
             modelBuilder.Entity("Rentaly.EntityLayer.Entities.Rental", b =>
                 {
                     b.Property<int>("RentalId")
@@ -252,11 +444,77 @@ namespace Rentaly.DataAccessLayer.Migrations
                     b.ToTable("Rentals");
                 });
 
+            modelBuilder.Entity("Rentaly.EntityLayer.Entities.Testimonial", b =>
+                {
+                    b.Property<int>("TestimonialId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TestimonialId"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TestimonialId");
+
+                    b.ToTable("Testimonials");
+                });
+
+            modelBuilder.Entity("Rentaly.EntityLayer.Entities.VehicleType", b =>
+                {
+                    b.Property<int>("VehicleTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VehicleTypeId"));
+
+                    b.Property<string>("IconUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VehicleTypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("VehicleTypeId");
+
+                    b.ToTable("VehicleTypes");
+                });
+
             modelBuilder.Entity("Rentaly.EntityLayer.Entities.Car", b =>
                 {
                     b.HasOne("Rentaly.EntityLayer.Entities.Branch", "Branch")
                         .WithMany("Cars")
                         .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Rentaly.EntityLayer.Entities.Brand", "Brand")
+                        .WithMany("Cars")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Rentaly.EntityLayer.Entities.CarModel", "CarModel")
+                        .WithMany()
+                        .HasForeignKey("CarModelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -266,9 +524,21 @@ namespace Rentaly.DataAccessLayer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Rentaly.EntityLayer.Entities.VehicleType", "VehicleType")
+                        .WithMany("Cars")
+                        .HasForeignKey("VehicleTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Branch");
 
+                    b.Navigation("Brand");
+
+                    b.Navigation("CarModel");
+
                     b.Navigation("Category");
+
+                    b.Navigation("VehicleType");
                 });
 
             modelBuilder.Entity("Rentaly.EntityLayer.Entities.Branch", b =>
@@ -276,7 +546,17 @@ namespace Rentaly.DataAccessLayer.Migrations
                     b.Navigation("Cars");
                 });
 
+            modelBuilder.Entity("Rentaly.EntityLayer.Entities.Brand", b =>
+                {
+                    b.Navigation("Cars");
+                });
+
             modelBuilder.Entity("Rentaly.EntityLayer.Entities.Category", b =>
+                {
+                    b.Navigation("Cars");
+                });
+
+            modelBuilder.Entity("Rentaly.EntityLayer.Entities.VehicleType", b =>
                 {
                     b.Navigation("Cars");
                 });
