@@ -1,0 +1,73 @@
+﻿@model Rentaly.EntityLayer.Entities.Brand
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<main class="ml-[280px] pt-[72px] min-h-screen bg-[#F8FAFC]">
+    <div class="p-xl max-w-2xl mx-auto">
+        <nav class="mb-md flex items-center gap-xs text-label-sm text-on-surface-variant">
+            <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="hover:text-primary transition-colors">Dashboard</a>
+            <span class="material-symbols-outlined text-[14px] opacity-50">chevron_right</span>
+            <a asp-area="Admin" asp-controller="Brand" asp-action="Index" class="hover:text-primary transition-colors">Marka Yönetimi</a>
+            <span class="material-symbols-outlined text-[14px] opacity-50">chevron_right</span>
+            <span class="text-on-surface font-semibold">Yeni Marka</span>
+        </nav>
+
+        <h1 class="font-h1 text-h1 text-on-surface mb-xs">Yeni Marka Ekle</h1>
+        <p class="font-body-md text-on-surface-variant mb-2xl">Filonuza yeni bir araç markası tanımlayın.</p>
+
+        <form asp-area="Admin" asp-controller="Brand" asp-action="CreateBrand" method="post">
+            <div class="bg-white border border-outline-variant rounded-2xl p-lg shadow-sm space-y-lg">
+
+                <div class="space-y-2">
+                    <label class="font-label-md text-on-surface">Marka Adı <span class="text-primary">*</span></label>
+                    <input asp-for="BrandName" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md" placeholder="Örn: Renault" type="text" />
+                    <span asp-validation-for="BrandName" class="text-error text-label-sm"></span>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="font-label-md text-on-surface">Logo URL</label>
+                    <input asp-for="ImageUrl" id="brandImageUrlInput"
+                           class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md"
+                           placeholder="https://..." oninput="previewBrandLogo(this.value)" />
+                    <p class="font-label-sm text-on-surface-variant">Marka logosunun barındırıldığı görsel bağlantısı.</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="font-label-md text-on-surface">Önizleme</label>
+                    <div class="h-32 rounded-xl bg-surface-container-lowest border border-outline-variant flex items-center justify-center overflow-hidden">
+                        <img id="brandLogoPreview" class="hidden h-16 w-auto object-contain" src="" alt="Logo önizleme" />
+                        <span id="brandPreviewPlaceholder" class="material-symbols-outlined text-[32px] text-outline">stars</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-md mt-xl">
+                <a asp-area="Admin" asp-controller="Brand" asp-action="Index"
+                   class="px-xl py-3 rounded-xl border border-outline-variant text-on-surface font-label-md hover:bg-surface-container-low transition-all">
+                    İptal
+                </a>
+                <button type="submit" class="bg-[#22C55E] hover:bg-[#16A34A] text-white px-xl py-3 rounded-xl font-label-md flex items-center gap-2 transition-all shadow-sm active:scale-95">
+                    <span class="material-symbols-outlined text-[20px]">check_circle</span>
+                    Markayı Kaydet
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+    function previewBrandLogo(url) {
+        const preview = document.getElementById('brandLogoPreview');
+        const placeholder = document.getElementById('brandPreviewPlaceholder');
+
+        if (url && url.trim().length > 0) {
+            preview.src = url;
+            preview.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+        } else {
+            preview.classList.add('hidden');
+            placeholder.classList.remove('hidden');
+        }
+    }
+</script>

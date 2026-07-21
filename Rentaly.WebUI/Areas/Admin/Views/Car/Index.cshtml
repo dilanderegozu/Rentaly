@@ -1,0 +1,204 @@
+﻿
+@model Rentaly.WebUI.Areas.Admin.Models.VehicleListViewModel
+@using Rentaly.WebUI.Helpers
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+    <main class="ml-[280px] mt-[72px] p-container-padding">
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 mb-md font-label-md text-label-md text-on-surface-variant">
+            <a class="hover:text-primary transition-colors" href="#">Dashboard</a>
+            <span class="material-symbols-outlined text-[16px] opacity-40">chevron_right</span>
+            <span class="opacity-60">Araç Yönetimi</span>
+            <span class="material-symbols-outlined text-[16px] opacity-40">chevron_right</span>
+            <span class="text-primary font-bold">Araç Listesi</span>
+        </nav>
+        <!-- Header Section -->
+        <div class="flex justify-between items-center mb-xl">
+            <div>
+                <h2 class="font-h1 text-h1 text-on-surface mb-xs">Araç Listesi</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant">Toplam @Model.TotalCar kayıtlı araç bulunmaktadır.</p>
+            </div>
+            <button class="bg-[#22C55E] hover:bg-[#16A34A] text-white px-lg py-md rounded-lg flex items-center gap-2 transition-all font-label-md text-label-md shadow-sm active:scale-95">
+                <span class="material-symbols-outlined">add</span>
+                Yeni Araç Ekle
+            </button>
+        </div>
+        <!-- Filters Card -->
+    <form asp-area="Admin" asp-controller="Car" asp-action="Index" method="get">
+        <div class="bg-white rounded-xl border border-outline-variant p-lg mb-xl flex flex-wrap items-center gap-3">
+            <div class="flex-1 min-w-[240px] relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                <input name="searchTerm" value="@Context.Request.Query["searchTerm"]"
+                       class="w-full border border-outline-variant rounded-lg py-2.5 pl-10 pr-4 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all outline-none font-body-sm text-body-sm"
+                       placeholder="Marka, model veya plaka ara..." type="text" />
+            </div>
+
+            <select name="brandId" class="border border-outline-variant rounded-lg px-4 py-2.5 font-label-md text-label-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none min-w-[140px] bg-white appearance-none cursor-pointer">
+                <option value="">Marka Seçin</option>
+                @foreach (var item in Model.Brands)
+                {
+                    <option value="@item.BrandId">@item.BrandName</option>
+                }
+            </select>
+
+            <select name="carModelId" class="border border-outline-variant rounded-lg px-4 py-2.5 font-label-md text-label-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none min-w-[140px] bg-white appearance-none cursor-pointer">
+                <option value="">Model Seçin</option>
+                @foreach (var item in Model.CarModels)
+                {
+                    <option value="@item.CarModelId">@item.ModelName</option>
+                }
+            </select>
+
+            <select name="categoryId" class="border border-outline-variant rounded-lg px-4 py-2.5 font-label-md text-label-md focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none min-w-[140px] bg-white appearance-none cursor-pointer">
+                <option value="">Kategori</option>
+                @foreach (var item in Model.Categories)
+                {
+                    <option value="@item.CategoryId">@item.CategoryName</option>
+                }
+            </select>
+
+            <button type="submit" class="p-2.5 border border-outline-variant rounded-lg hover:bg-surface-container transition-colors">
+                <span class="material-symbols-outlined text-on-surface-variant">filter_list</span>
+            </button>
+        </div>
+    </form>
+     
+        <!-- Main Table Section -->
+        <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-[#F8FAFC]">
+                        <tr>
+                            <th class="px-lg py-4 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant border-b border-outline-variant">Araç</th>
+                            <th class="px-lg py-4 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant border-b border-outline-variant">Plaka</th>
+                            <th class="px-lg py-4 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant border-b border-outline-variant">Kategori</th>
+                            <th class="px-lg py-4 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant border-b border-outline-variant">Şube</th>
+                            <th class="px-lg py-4 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant border-b border-outline-variant text-right">Günlük Ücret</th>
+                            <th class="px-lg py-4 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant border-b border-outline-variant text-center">Durum</th>
+                            <th class="px-lg py-4 font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant border-b border-outline-variant text-right">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-outline-variant">
+                    @foreach(var item in Model.Cars)
+                    {
+                        <tr class="hover:bg-[#F8FAFC] transition-colors group">
+                            <td class="px-lg py-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-16 h-12 bg-surface-container rounded-lg flex items-center justify-center overflow-hidden border border-outline-variant">
+                                        <img class="w-full h-full object-cover" data-alt="" src="@item.ImageUrl" />
+                                    </div>
+                                    <div>
+                                        <p class="font-label-md text-label-md text-on-surface font-bold">@item.Brand.BrandName</p>
+                                        
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-lg py-4 font-body-md text-body-md font-medium">@item.PlateNumber</td>
+                            <td class="px-lg py-4">
+                                <span class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-full font-label-sm text-label-sm">@item.Category.CategoryName</span>
+                            </td>
+                            <td class="px-lg py-4 font-body-md text-body-md">@item.Branch.BranchName</td>
+                            <td class="px-lg py-4 text-right font-bold text-on-surface">₺@item.DailyPrice</td>
+                            <td class="px-lg py-4 text-center">
+                                @{
+                                    var (statusText, statusBg, statusTextClass, statusDot) = CarStatusDisplayHelper.GetDisplay(item.Status);
+                                }
+                                <span class="inline-flex items-center gap-1 @statusBg @statusTextClass px-3 py-1 rounded-full font-label-sm text-label-sm font-bold">
+                                    <span class="w-1.5 h-1.5 rounded-full @statusDot"></span>
+                                    @statusText
+                                </span>
+                            </td>
+                            <td class="px-lg py-4 text-right">
+                               <div class="flex items-center justify-end gap-1">
+    <a asp-area="Admin" asp-controller="Car" asp-action="CarDetails" asp-route-id="@item.CarId"
+       class="p-2 hover:bg-surface-container-high rounded-lg text-primary transition-colors" title="Görüntüle">
+        <span class="material-symbols-outlined text-[20px]">visibility</span>
+    </a>
+
+    <a asp-area="Admin" asp-controller="Car" asp-action="CarEdit" asp-route-id="@item.CarId"
+       class="p-2 hover:bg-surface-container-high rounded-lg text-secondary transition-colors" title="Düzenle">
+        <span class="material-symbols-outlined text-[20px]">edit</span>
+    </a>
+
+    <form asp-area="Admin" asp-controller="Car" asp-action="CarDelete" asp-route-id="@item.CarId" method="post"
+          onsubmit="return confirm('Bu aracı silmek istediğinize emin misiniz?');" class="inline">
+        <button type="submit" class="p-2 hover:bg-error-container/50 rounded-lg text-error transition-colors" title="Sil">
+            <span class="material-symbols-outlined text-[20px]">delete</span>
+        </button>
+    </form>
+</div>
+                            </td>
+                        </tr>
+                    }
+                
+                     
+                    
+                    </tbody>
+                </table>
+            </div>
+            <!-- Pagination -->
+        <div class="px-lg py-4 bg-white flex items-center justify-between border-t border-outline-variant">
+            <p class="font-label-sm text-label-sm text-on-surface-variant">
+                @Model.TotalCar araçtan
+                <span class="font-bold">
+                    @(((Model.CurrentPage - 1) * Model.PageSize) + 1)-@(Math.Min(Model.CurrentPage * Model.PageSize, Model.TotalCar))
+                </span>
+                arası gösteriliyor
+            </p>
+
+            <div class="flex items-center gap-2">
+                <a asp-area="Admin" asp-controller="Car" asp-action="Index"
+                   asp-route-page="@(Model.CurrentPage - 1)"
+                   asp-route-searchTerm="@Context.Request.Query["searchTerm"]"
+                   asp-route-brandId="@Context.Request.Query["brandId"]"
+                   asp-route-carModelId="@Context.Request.Query["carModelId"]"
+                   asp-route-categoryId="@Context.Request.Query["categoryId"]"
+                   class="px-4 py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container transition-all flex items-center gap-1 @(Model.CurrentPage <= 1 ? "opacity-40 pointer-events-none" : "")">
+                    <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                    Önceki
+                </a>
+
+                <div class="flex items-center gap-1">
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <a asp-area="Admin" asp-controller="Car" asp-action="Index"
+                           asp-route-page="@i"
+                           asp-route-searchTerm="@Context.Request.Query["searchTerm"]"
+                           asp-route-brandId="@Context.Request.Query["brandId"]"
+                           asp-route-carModelId="@Context.Request.Query["carModelId"]"
+                           asp-route-categoryId="@Context.Request.Query["categoryId"]"
+                           class="w-10 h-10 flex items-center justify-center rounded-lg font-bold @(i == Model.CurrentPage ? "bg-primary text-white" : "hover:bg-surface-container-low font-medium transition-colors")">
+                            @i
+                        </a>
+                    }
+                </div>
+
+                <a asp-area="Admin" asp-controller="Car" asp-action="Index"
+                   asp-route-page="@(Model.CurrentPage + 1)"
+                   asp-route-searchTerm="@Context.Request.Query["searchTerm"]"
+                   asp-route-brandId="@Context.Request.Query["brandId"]"
+                   asp-route-carModelId="@Context.Request.Query["carModelId"]"
+                   asp-route-categoryId="@Context.Request.Query["categoryId"]"
+                   class="px-4 py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container transition-all flex items-center gap-1 @(Model.CurrentPage >= Model.TotalPages ? "opacity-40 pointer-events-none" : "")">
+                    Sonraki
+                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                </a>
+            </div>
+        </div>
+        </div>
+    </main>
+    <script>
+        // Simple Micro-interaction for hover states and transitions
+        document.querySelectorAll('button, a, select').forEach(el => {
+        el.addEventListener('click', function(e) {
+        if (this.tagName === 'BUTTON') {
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple';
+        this.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+        }
+        });
+        });
+    </script>

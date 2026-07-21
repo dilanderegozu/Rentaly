@@ -1,0 +1,230 @@
+﻿@model Rentaly.EntityLayer.Entities.Car
+@using Rentaly.WebUI.Helpers
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<main class="ml-[280px] w-[calc(100%-280px)] min-h-screen flex flex-col">
+    <!-- TopNavBar -->
+
+
+    <!-- Page Content -->
+    <div class="p-container-padding space-y-xl">
+        <!-- Breadcrumb & Page Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-md">
+            <div>
+                <nav class="flex items-center gap-xs text-on-surface-variant font-label-sm mb-xs">
+                    <a class="hover:text-primary transition-colors" href="#">Dashboard</a>
+                    <span class="material-symbols-outlined text-[14px] opacity-50">chevron_right</span>
+                    <a class="hover:text-primary transition-colors" href="#">Araç Yönetimi</a>
+                    <span class="material-symbols-outlined text-[14px] opacity-50">chevron_right</span>
+                    <a class="hover:text-primary transition-colors" href="#">Araç Listesi</a>
+                    <span class="material-symbols-outlined text-[14px] opacity-50">chevron_right</span>
+                    <span class="text-on-surface font-semibold">Araç Detayı</span>
+                </nav>
+                <h2 class="font-h1 text-h1 text-on-surface">@Model.CarModel.ModelName <span class="text-on-surface-variant font-normal">— @Model.PlateNumber</span></h2>
+            </div>
+            <div class="flex gap-sm">
+                <button class="flex items-center gap-xs px-lg py-md bg-surface-container-lowest border border-outline-variant rounded-xl font-label-md text-on-surface hover:bg-surface-container transition-all active:scale-95">
+                    <span class="material-symbols-outlined text-[18px]">share</span>
+                    Paylaş
+                </button>
+                <button class="flex items-center gap-xs px-lg py-md bg-primary text-on-primary rounded-xl font-label-md hover:opacity-90 transition-all shadow-sm active:scale-95">
+                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                    Düzenle
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="grid grid-cols-12 gap-xl">
+            <!-- Vehicle Showcase -->
+            <div class="col-span-12 lg:col-span-4 space-y-xl">
+                <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant overflow-hidden shadow-sm">
+                    <div class="aspect-[16/10] relative">
+                        <img class="w-full h-full object-cover" src="@Model.ImageUrl" />
+                        <div class="absolute top-md right-md">
+                            @{
+                                var (statusText, statusBg, statusTextClass, statusDot) = CarStatusDisplayHelper.GetDisplay(Model.Status);
+                            }
+                            <span class="@statusBg @statusTextClass px-sm py-xs rounded-full font-label-sm font-bold flex items-center gap-xs shadow-sm">
+                                <span class="w-1.5 h-1.5 rounded-full @statusDot"></span>
+                                @statusText
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-lg grid grid-cols-2 gap-md">
+                        <div class="flex items-center gap-md p-md bg-surface-container-low rounded-xl">
+                            <div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary shrink-0">
+                                <span class="material-symbols-outlined text-[20px]">calendar_month</span>
+                            </div>
+                            <div>
+                                <p class="text-label-sm text-on-surface-variant">Yıl</p>
+                                <p class="font-label-md text-on-surface font-semibold">@Model.Year</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-md p-md bg-surface-container-low rounded-xl">
+                            <div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary shrink-0">
+                                <span class="material-symbols-outlined text-[20px]">event_seat</span>
+                            </div>
+                            <div>
+                                <p class="text-label-sm text-on-surface-variant">Koltuk Sayısı</p>
+                                <p class="font-label-md text-on-surface font-semibold">@Model.SeatCount</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-md p-md bg-surface-container-low rounded-xl">
+                            <div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary shrink-0">
+                                <span class="material-symbols-outlined text-[20px]">local_gas_station</span>
+                            </div>
+                            <div>
+                                <p class="text-label-sm text-on-surface-variant">Yakıt</p>
+                                <p class="font-label-md text-on-surface font-semibold">@Model.FuelType</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-md p-md bg-surface-container-low rounded-xl">
+                            <div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary shrink-0">
+                                <span class="material-symbols-outlined text-[20px]">speed</span>
+                            </div>
+                            <div>
+                                <p class="text-label-sm text-on-surface-variant">Kilometre</p>
+                                <p class="font-label-md text-on-surface font-semibold">@Model.Kilometer</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-md p-md bg-surface-container-low rounded-xl col-span-2">
+                            <div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-primary shrink-0">
+                                <span class="material-symbols-outlined text-[20px]">store</span>
+                            </div>
+                            <div>
+                                <p class="text-label-sm text-on-surface-variant">Şube</p>
+                                <p class="font-label-md text-on-surface font-semibold">@Model.Branch.BranchName</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+      
+            <!-- Rental History & Records -->
+            <div class="col-span-12 lg:col-span-7 space-y-xl">
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+                    <div class="bg-surface-container-lowest p-lg rounded-2xl border border-outline-variant flex flex-col justify-between shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Toplam Kazanç</span>
+                            <span class="material-symbols-outlined text-[18px] text-primary opacity-60">payments</span>
+                        </div>
+                        <div class="mt-sm">
+                            <p class="text-h2 font-black text-on-surface">₺42.500</p>
+                            <p class="text-[#16A34A] text-label-sm flex items-center gap-xs font-semibold">
+                                <span class="material-symbols-outlined text-[16px]">trending_up</span>
+                                %12 artış
+                            </p>
+                        </div>
+                    </div>
+                    <div class="bg-surface-container-lowest p-lg rounded-2xl border border-outline-variant flex flex-col justify-between shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Kiralama Sayısı</span>
+                            <span class="material-symbols-outlined text-[18px] text-primary opacity-60">key</span>
+                        </div>
+                        <div class="mt-sm">
+                            <p class="text-h2 font-black text-on-surface">18</p>
+                            <p class="text-on-surface-variant text-label-sm">Bu yıl aktif</p>
+                        </div>
+                    </div>
+                    <div class="bg-surface-container-lowest p-lg rounded-2xl border border-outline-variant flex flex-col justify-between shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-label-sm text-on-surface-variant uppercase tracking-wider">Ort. Günlük Fiyat</span>
+                            <span class="material-symbols-outlined text-[18px] text-primary opacity-60">sell</span>
+                        </div>
+                        <div class="mt-sm">
+                            <p class="text-h2 font-black text-on-surface">₺1.200</p>
+                            <p class="text-on-surface-variant text-label-sm">B-Segment ortalaması</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rental History Table -->
+                <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
+                    <div class="p-lg border-b border-outline-variant flex items-center justify-between">
+                        <h3 class="font-h3 text-h3 flex items-center gap-sm">
+                            <span class="material-symbols-outlined text-primary">history</span>
+                            Kiralama Geçmişi
+                        </h3>
+                        <button class="text-secondary font-label-md hover:underline">Hepsini Gör</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="bg-surface-container-low text-on-surface-variant font-label-sm uppercase">
+                                <tr>
+                                    <th class="px-lg py-md">Müşteri Adı</th>
+                                    <th class="px-lg py-md">Tarih Aralığı</th>
+                                    <th class="px-lg py-md">Tutar</th>
+                                    <th class="px-lg py-md">Durum</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-outline-variant">
+                                <tr class="hover:bg-surface-container-low transition-colors">
+                                    <td class="px-lg py-md">
+                                        <div class="flex items-center gap-sm">
+                                            <div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed-variant text-[10px] font-bold">AK</div>
+                                            <span class="font-body-md">Ahmet Kaya</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-lg py-md text-on-surface-variant font-body-sm">12.10.2025 – 15.10.2025</td>
+                                    <td class="px-lg py-md font-label-md font-semibold">₺3.600</td>
+                                    <td class="px-lg py-md">
+                                        <span class="px-sm py-1 rounded-full bg-[#DCFCE7] text-[#166534] text-[11px] font-bold">Tamamlandı</span>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-surface-container-low transition-colors">
+                                    <td class="px-lg py-md">
+                                        <div class="flex items-center gap-sm">
+                                            <div class="w-8 h-8 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed-variant text-[10px] font-bold">MY</div>
+                                            <span class="font-body-md">Merve Yılmaz</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-lg py-md text-on-surface-variant font-body-sm">05.10.2025 – 10.10.2025</td>
+                                    <td class="px-lg py-md font-label-md font-semibold">₺6.000</td>
+                                    <td class="px-lg py-md">
+                                        <span class="px-sm py-1 rounded-full bg-[#DCFCE7] text-[#166534] text-[11px] font-bold">Tamamlandı</span>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-surface-container-low transition-colors">
+                                    <td class="px-lg py-md">
+                                        <div class="flex items-center gap-sm">
+                                            <div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed-variant text-[10px] font-bold">CB</div>
+                                            <span class="font-body-md">Can Berk</span>
+                                        </div>
+                                    </td>
+                                    <td class="px-lg py-md text-on-surface-variant font-body-sm">01.10.2025 – 03.10.2025</td>
+                                    <td class="px-lg py-md font-label-md font-semibold">₺2.400</td>
+                                    <td class="px-lg py-md">
+                                        <span class="px-sm py-1 rounded-full bg-[#DCFCE7] text-[#166534] text-[11px] font-bold">Tamamlandı</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sticky Footer -->
+    <div class="sticky bottom-0 w-full bg-surface-container-lowest/90 backdrop-blur-md border-t border-outline-variant p-md flex justify-center z-30">
+        <button class="px-xl py-md bg-surface-container-highest text-on-surface rounded-full font-label-md shadow-md flex items-center gap-sm hover:scale-105 transition-transform active:scale-95">
+            <span class="material-symbols-outlined text-[18px]">print</span>
+            Raporu İndir
+        </button>
+    </div>
+</main>
+
+<script>
+    document.querySelectorAll('nav a').forEach(link => {
+        link.addEventListener('click', function (e) {
+            if (this.getAttribute('href') === '#') e.preventDefault();
+        });
+    });
+</script>

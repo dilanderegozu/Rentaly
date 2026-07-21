@@ -1,0 +1,265 @@
+﻿@model Rentaly.WebUI.Areas.Admin.Models.CarCreateViewModel
+@using Rentaly.WebUI.Helpers
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var car = Model.Car;
+}
+
+<main class="ml-[280px] min-h-screen">
+    <div class="mt-[72px] p-xl space-y-xl">
+
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h2 class="font-h1 text-h1 text-on-surface">Yeni Araç Ekle</h2>
+                <p class="font-body-md text-on-surface-variant">Sisteme yeni bir araç ekleyerek filonuzu genişletin.</p>
+            </div>
+            <a asp-area="Admin" asp-controller="Car" asp-action="Index"
+               class="inline-flex items-center gap-2 px-xl py-2.5 rounded-xl border-2 border-primary text-primary font-bold hover:bg-primary-container/10 transition-all">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Araç Listesine Dön
+            </a>
+        </div>
+
+        <form asp-area="Admin" asp-controller="Car" asp-action="CreateCar" method="post" enctype="multipart/form-data">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
+                <!-- Left Section -->
+                <div class="lg:col-span-8">
+                    <section class="bg-white p-lg rounded-xl border border-outline-variant shadow-sm space-y-xl">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="material-symbols-outlined text-primary bg-primary-container/20 p-2 rounded-lg">info</span>
+                            <h3 class="font-h3 text-h3 text-on-surface">Araç Bilgileri</h3>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+                            <div class="space-y-2">
+                                <label class="font-label-md text-on-surface">Plaka <span class="text-primary">*</span></label>
+                                <input asp-for="@car.PlateNumber" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md" placeholder="Örn: 34 ABC 123" type="text" />
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="font-label-md text-on-surface">Şasi (VIN) Numarası <span class="text-primary">*</span></label>
+                                <input asp-for="@car.VIN" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md" placeholder="17 Haneli VIN" type="text" />
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="font-label-md text-on-surface">Marka <span class="text-primary">*</span></label>
+                                <select asp-for="@car.BrandId" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md bg-white">
+                                    <option value="">Marka Seçin</option>
+                                    @foreach (var brand in Model.Brands)
+                                    {
+                                        <option value="@brand.BrandId">@brand.BrandName</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="font-label-md text-on-surface">Model <span class="text-primary">*</span></label>
+                                <select asp-for="@car.CarModelId" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md bg-white">
+                                    <option value="">Model Seçin</option>
+                                    @foreach (var carModel in Model.CarModels)
+                                    {
+                                        <option value="@carModel.CarModelId">@carModel.ModelName</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="font-label-md text-on-surface">Kategori <span class="text-primary">*</span></label>
+                                <select asp-for="@car.CategoryId" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md bg-white">
+                                    <option value="">Kategori Seçin</option>
+                                    @foreach (var category in Model.Categories)
+                                    {
+                                        <option value="@category.CategoryId">@category.CategoryName</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="font-label-md text-on-surface">Araç Tipi <span class="text-primary">*</span></label>
+                                <select asp-for="@car.VehicleTypeId" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md bg-white">
+                                    <option value="">Araç Tipi Seçin</option>
+                                    @foreach (var vehicleType in Model.VehicleTypes)
+                                    {
+                                        <option value="@vehicleType.VehicleTypeId">@vehicleType.VehicleTypeName</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="font-label-md text-on-surface">Şube <span class="text-primary">*</span></label>
+                                <select asp-for="@car.BranchId" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md bg-white">
+                                    <option value="">Şube Seçin</option>
+                                    @foreach (var branch in Model.Branches)
+                                    {
+                                        <option value="@branch.BranchId">@branch.BranchName</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="font-label-md text-on-surface">Yakıt Tipi <span class="text-primary">*</span></label>
+                                <select asp-for="@car.FuelType" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md bg-white">
+                                    <option value="Benzin">Benzin</option>
+                                    <option value="Dizel">Dizel</option>
+                                    <option value="Elektrik">Elektrikli</option>
+                                    <option value="Hybrid">Hibrit</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="font-label-md text-on-surface">Yıl <span class="text-primary">*</span></label>
+                                <input asp-for="@car.Year" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md" max="2026" min="2010" type="number" value="2024" />
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="font-label-md text-on-surface">Motor Hacmi (cc)</label>
+                                <input asp-for="@car.EngineCapacity" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md" placeholder="Örn: 1600" type="number" />
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="font-label-md text-on-surface">Günlük Fiyat <span class="text-primary">*</span></label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">₺</span>
+                                    <input asp-for="@car.DailyPrice" class="w-full h-11 pl-8 pr-4 rounded-lg border border-outline-variant form-input-focus text-body-md" placeholder="0.00" type="number" step="0.01" />
+                                </div>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="font-label-md text-on-surface">Depozito Tutarı</label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">₺</span>
+                                    <input asp-for="@car.DepositAmount" class="w-full h-11 pl-8 pr-4 rounded-lg border border-outline-variant form-input-focus text-body-md" placeholder="0.00" type="number" step="0.01" />
+                                </div>
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="font-label-md text-on-surface">Koltuk Sayısı</label>
+                                <input asp-for="@car.SeatCount" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md" type="number" value="5" />
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="font-label-md text-on-surface">Bagaj Kapasitesi</label>
+                                <input asp-for="@car.LuggageCount" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md" type="number" value="2" />
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="font-label-md text-on-surface">Kilometre</label>
+                                <input asp-for="@car.Kilometer" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md" type="number" value="0" />
+                            </div>
+
+                            <div class="md:col-span-2 space-y-2">
+                                <label class="font-label-md text-on-surface">Açıklama</label>
+                                <textarea asp-for="@car.Description" class="w-full p-4 rounded-lg border border-outline-variant form-input-focus text-body-md resize-none" placeholder="Araç hakkında ek detaylar..." rows="4"></textarea>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Right Section -->
+                <div class="lg:col-span-4 space-y-xl">
+                    <section class="bg-white p-lg rounded-xl border border-outline-variant shadow-sm">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="material-symbols-outlined text-primary bg-primary-container/20 p-2 rounded-lg">photo_camera</span>
+                            <h3 class="font-h3 text-h3 text-on-surface">Araç Görseli</h3>
+                        </div>
+
+                        <label for="carImageInput" class="border-2 border-dashed border-outline-variant rounded-xl p-xl flex flex-col items-center justify-center text-center cursor-pointer hover:border-primary hover:bg-surface-container-low transition-all group block relative overflow-hidden">
+                            <img id="carImagePreview" class="hidden w-full h-40 object-cover rounded-lg mb-3" src="" alt="" />
+                            <span id="uploadPlaceholder" class="material-symbols-outlined text-outline text-4xl mb-3 group-hover:text-primary transition-colors">cloud_upload</span>
+                            <p id="uploadText" class="font-label-md text-on-surface font-bold">Resim Yükle veya Sürükle</p>
+                            <p class="font-label-sm text-on-surface-variant mt-1">PNG, JPG veya WebP (Maks. 5MB)</p>
+                        </label>
+                        <input type="file" id="carImageInput" name="ImageFile" accept="image/*" class="hidden" onchange="previewNewCarImage(this)" />
+
+                        <div class="flex items-center gap-3 my-4">
+                            <div class="flex-1 h-px bg-outline-variant"></div>
+                            <span class="font-label-sm text-on-surface-variant">VEYA</span>
+                            <div class="flex-1 h-px bg-outline-variant"></div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="font-label-md text-on-surface">Görsel URL'i Yapıştır</label>
+                            <input type="text" id="carImageUrlInput" name="ImageUrlInput"
+                                   class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md"
+                                   placeholder="https://..." oninput="previewImageFromUrl(this.value)" />
+                        </div>
+                    </section>
+
+                    <section class="bg-white p-lg rounded-xl border border-outline-variant shadow-sm space-y-xl">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary bg-primary-container/20 p-2 rounded-lg">rule</span>
+                            <h3 class="font-h3 text-h3 text-on-surface">Durum Bilgileri</h3>
+                        </div>
+                        <div class="space-y-lg">
+                            <div class="space-y-2">
+                                <label class="font-label-md text-on-surface">Araç Durumu</label>
+                                <select asp-for="@car.Status" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md bg-white">
+                                    @foreach (Rentaly.EntityLayer.Entities.CarStatus status in Enum.GetValues(typeof(Rentaly.EntityLayer.Entities.CarStatus)))
+                                    {
+                                        var (text, _, _, _) = CarStatusDisplayHelper.GetDisplay(status);
+                                        <option value="@((int)status)">@text</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="flex items-center justify-between py-2">
+                                <div>
+                                    <p class="font-label-md text-on-surface font-bold">Aktif Araç</p>
+                                    <p class="font-label-sm text-on-surface-variant">Listelerde görüntülensin mi?</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input asp-for="@car.IsActive" type="checkbox" class="w-5 h-5" checked />
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-md py-xl">
+                <a asp-area="Admin" asp-controller="Car" asp-action="Index" class="px-xl py-3 rounded-xl border-2 border-outline-variant text-on-surface font-bold hover:bg-surface-container-low transition-all">İptal</a>
+                <button type="submit" class="px-2xl py-3 rounded-xl bg-primary text-on-primary font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">Aracı Kaydet</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+    function previewNewCarImage(input) {
+        if (input.files && input.files[0]) {
+         
+            document.getElementById('carImageUrlInput').value = '';
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                showPreview(e.target.result);
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function previewImageFromUrl(url) {
+        if (url && url.trim().length > 0) {
+          
+            document.getElementById('carImageInput').value = '';
+            showPreview(url);
+        } else {
+            resetPreview();
+        }
+    }
+
+    function showPreview(src) {
+        const preview = document.getElementById('carImagePreview');
+        preview.src = src;
+        preview.classList.remove('hidden');
+        document.getElementById('uploadPlaceholder').classList.add('hidden');
+        document.getElementById('uploadText').textContent = 'Görsel seçildi — değiştirmek için tıkla';
+    }
+
+    function resetPreview() {
+        const preview = document.getElementById('carImagePreview');
+        preview.classList.add('hidden');
+        document.getElementById('uploadPlaceholder').classList.remove('hidden');
+        document.getElementById('uploadText').textContent = 'Resim Yükle veya Sürükle';
+    }
+</script>

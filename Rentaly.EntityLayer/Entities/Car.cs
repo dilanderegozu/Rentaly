@@ -35,5 +35,12 @@ namespace Rentaly.EntityLayer.Entities
         public int EngineCapacity { get; set; }
         public VehicleType VehicleType { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public CarStatus Status { get; set; } = CarStatus.Available;
+    }
+    public enum CarStatus
+    {
+        Available,
+        Rented,
+        Maintenance
     }
 }

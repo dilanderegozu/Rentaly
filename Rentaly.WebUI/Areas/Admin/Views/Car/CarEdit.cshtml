@@ -1,0 +1,185 @@
+﻿@model Rentaly.WebUI.Areas.Admin.Models.CarEditViewModel
+@using Rentaly.WebUI.Helpers
+@using Rentaly.EntityLayer.Entities
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var car = Model.Car;
+}
+<main class="ml-[280px] pt-16 min-h-screen">
+    <div class="p-xl max-w-6xl mx-auto">
+
+        <nav class="mb-md flex items-center gap-sm text-label-sm text-on-surface-variant">
+            <a class="hover:text-primary transition-colors" href="#">Dashboard</a>
+            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+            <a class="hover:text-primary transition-colors" href="#">Araç Yönetimi</a>
+            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+            <a asp-area="Admin" asp-controller="Car" asp-action="Index" class="hover:text-primary transition-colors">Araç Listesi</a>
+            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+            <span class="text-on-surface">Araç Düzenle</span>
+        </nav>
+
+        <form asp-area="Admin" asp-controller="Car" asp-action="CarEdit" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="@car.CarId" />
+
+            <div class="flex justify-between items-end mb-xl">
+                <div>
+                    <h2 class="font-h1 text-h1 text-on-surface">Aracı Düzenle: @car.Brand?.BrandName @car.CarModel?.ModelName</h2>
+                    <p class="text-body-md text-on-surface-variant mt-1">Plaka: @car.PlateNumber</p>
+                </div>
+                <div class="flex gap-md">
+                    @{
+                        var (statusText, statusBg, statusTextClass, statusDot) = CarStatusDisplayHelper.GetDisplay(car.Status);
+                    }
+                    <span class="px-md py-1 rounded-full @statusBg @statusTextClass font-label-sm flex items-center gap-xs">
+                        <span class="w-2 h-2 rounded-full @statusDot"></span> @statusText
+                    </span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-xl">
+                <!-- Main Form Column -->
+                <div class="lg:col-span-2 space-y-xl">
+                    <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-sm">
+                        <h3 class="font-h3 text-h3 mb-lg text-on-surface flex items-center gap-sm">
+                            <span class="material-symbols-outlined text-primary">info</span>
+                            Genel Bilgiler
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-xl">
+                            <div class="space-y-sm">
+                                <label class="font-label-md text-on-surface-variant block">Marka</label>
+                                <select asp-for="@car.BrandId" class="w-full h-11 border border-outline-variant rounded-lg px-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none">
+                                    @foreach (var brand in Model.Brands)
+                                    {
+                                        <option value="@brand.BrandId" selected="@(brand.BrandId == car.BrandId)">@brand.BrandName</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="space-y-sm">
+                                <label class="font-label-md text-on-surface-variant block">Model</label>
+                                <select asp-for="@car.CarModelId" class="w-full h-11 border border-outline-variant rounded-lg px-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none">
+                                    @foreach (var carModel in Model.CarModels)
+                                    {
+                                        <option value="@carModel.CarModelId" selected="@(carModel.CarModelId == car.CarModelId)">@carModel.ModelName</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="space-y-sm">
+                                <label class="font-label-md text-on-surface-variant block">Plaka</label>
+                                <input asp-for="@car.PlateNumber" class="w-full h-11 border border-outline-variant rounded-lg px-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none" placeholder="00 AAA 000" type="text" />
+                            </div>
+
+                            <div class="space-y-sm">
+                                <label class="font-label-md text-on-surface-variant block">Model Yılı</label>
+                                <input asp-for="@car.Year" class="w-full h-11 border border-outline-variant rounded-lg px-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none" type="number" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-sm">
+                        <h3 class="font-h3 text-h3 mb-lg text-on-surface flex items-center gap-sm">
+                            <span class="material-symbols-outlined text-primary">tune</span>
+                            Teknik ve Kiralama Detayları
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-xl">
+                            <div class="space-y-sm">
+                                <label class="font-label-md text-on-surface-variant block">Yakıt Tipi</label>
+                                <select asp-for="@car.FuelType" class="w-full h-11 border border-outline-variant rounded-lg px-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none">
+                                    <option value="Benzin">Benzin</option>
+                                    <option value="Dizel">Dizel</option>
+                                    <option value="Hybrid">Hibrit</option>
+                                    <option value="Elektrik">Elektrikli</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-sm">
+                                <label class="font-label-md text-on-surface-variant block">Kategori</label>
+                                <select asp-for="@car.CategoryId" class="w-full h-11 border border-outline-variant rounded-lg px-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none">
+                                    @foreach (var category in Model.Categories)
+                                    {
+                                        <option value="@category.CategoryId" selected="@(category.CategoryId == car.CategoryId)">@category.CategoryName</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="space-y-sm">
+                                <label class="font-label-md text-on-surface-variant block">Günlük Ücret (₺)</label>
+                                <div class="relative">
+                                    <input asp-for="@car.DailyPrice" class="w-full h-11 border border-outline-variant rounded-lg px-md pr-12 font-body-md focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none" type="number" step="0.01" />
+                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 font-label-md text-on-surface-variant">₺</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-sm">
+                                <label class="font-label-md text-on-surface-variant block">Kilometre</label>
+                                <input asp-for="@car.Kilometer" class="w-full h-11 border border-outline-variant rounded-lg px-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none" type="number" />
+                            </div>
+
+                            <div class="space-y-sm md:col-span-2">
+                                <label class="font-label-md text-on-surface-variant block">Araç Mevcut Durumu</label>
+                                <select asp-for="@car.Status" class="w-full h-11 border border-outline-variant rounded-lg px-md font-body-md focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all outline-none">
+                                    @foreach (CarStatus status in Enum.GetValues(typeof(CarStatus)))
+                                    {
+                                        var (text, _, _, _) = CarStatusDisplayHelper.GetDisplay(status);
+                                        <option value="@((int)status)" selected="@(status == car.Status)">@text</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Media and Sidebar Column -->
+                <div class="space-y-xl">
+                    <div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg shadow-sm">
+                        <h3 class="font-h3 text-h3 mb-lg text-on-surface">Araç Görseli</h3>
+
+                        <label for="carImageInput" class="relative group cursor-pointer overflow-hidden rounded-lg border-2 border-dashed border-outline-variant hover:border-primary transition-colors block">
+                            <div class="aspect-[4/3] bg-surface-container-low flex items-center justify-center relative overflow-hidden">
+                                <img id="carImagePreview" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110" src="@car.ImageUrl" alt="@car.Brand?.BrandName" />
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center text-white transition-opacity duration-300">
+                                    <span class="material-symbols-outlined text-[40px] mb-2">add_a_photo</span>
+                                    <span class="font-label-md">Görseli Güncelle</span>
+                                </div>
+                            </div>
+                        </label>
+
+                        <input type="file" id="carImageInput" name="ImageFile" accept="image/*" class="hidden" onchange="previewCarImage(this)" />
+
+                        <p class="font-label-sm text-on-surface-variant text-center mt-md">Önerilen boyut: 1200x900px (Max 5MB)</p>
+                    </div>
+
+                    <div class="bg-primary/5 rounded-xl border border-primary/20 p-lg">
+                        <h4 class="font-label-md text-primary uppercase tracking-wider mb-md">Şube</h4>
+                        <p class="text-body-sm text-on-surface">@car.Branch?.BranchName</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="mt-2xl py-lg border-t border-outline-variant flex items-center justify-between">
+                <a asp-area="Admin" asp-controller="Car" asp-action="Index"
+                   class="px-xl py-md rounded-lg font-label-md text-on-surface-variant border border-outline-variant hover:bg-surface-container transition-colors active:scale-95">
+                    İptal
+                </a>
+                <button type="submit" class="px-2xl py-md rounded-lg font-label-md bg-primary-container text-on-primary-container shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center gap-sm">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    Değişiklikleri Kaydet
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+    function previewCarImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('carImagePreview').src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>

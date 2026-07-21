@@ -1,0 +1,91 @@
+﻿@model Rentaly.EntityLayer.Entities.Brand
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<main class="ml-[280px] pt-[72px] min-h-screen bg-[#F8FAFC]">
+    <div class="p-xl max-w-2xl mx-auto">
+        <nav class="mb-md flex items-center gap-xs text-label-sm text-on-surface-variant">
+            <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="hover:text-primary transition-colors">Dashboard</a>
+            <span class="material-symbols-outlined text-[14px] opacity-50">chevron_right</span>
+            <a asp-area="Admin" asp-controller="Brand" asp-action="Index" class="hover:text-primary transition-colors">Marka Yönetimi</a>
+            <span class="material-symbols-outlined text-[14px] opacity-50">chevron_right</span>
+            <span class="text-on-surface font-semibold">@Model.BrandName Düzenle</span>
+        </nav>
+
+        <h1 class="font-h1 text-h1 text-on-surface mb-xs">Markayı Düzenle</h1>
+        <p class="font-body-md text-on-surface-variant mb-2xl">@Model.BrandName markasının bilgilerini güncelleyin.</p>
+
+        <form asp-area="Admin" asp-controller="Brand" asp-action="EditBrand" method="post">
+            <input type="hidden" asp-for="BrandId" />
+
+            <div class="bg-white border border-outline-variant rounded-2xl p-lg shadow-sm space-y-lg">
+
+                <div class="space-y-2">
+                    <label class="font-label-md text-on-surface">Marka Adı <span class="text-primary">*</span></label>
+                    <input asp-for="BrandName" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md" type="text" />
+                    <span asp-validation-for="BrandName" class="text-error text-label-sm"></span>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="font-label-md text-on-surface">Logo URL</label>
+                    <input asp-for="ImageUrl" id="brandImageUrlInput"
+                           class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md"
+                           placeholder="https://..." oninput="previewBrandLogo(this.value)" />
+                </div>
+
+                <div class="space-y-2">
+                    <label class="font-label-md text-on-surface">Önizleme</label>
+                    <div class="h-32 rounded-xl bg-surface-container-lowest border border-outline-variant flex items-center justify-center overflow-hidden">
+                        <img id="brandLogoPreview" class="@(string.IsNullOrEmpty(Model.ImageUrl) ? "hidden" : "") h-16 w-auto object-contain" src="@Model.ImageUrl" alt="Logo önizleme" />
+                        <span id="brandPreviewPlaceholder" class="@(string.IsNullOrEmpty(Model.ImageUrl) ? "" : "hidden") material-symbols-outlined text-[32px] text-outline">stars</span>
+                    </div>
+                </div>
+
+                @if (Model.Cars != null && Model.Cars.Any())
+                {
+                    <div class="pt-md border-t border-outline-variant flex items-center gap-2 text-on-surface-variant font-label-sm">
+                        <span class="material-symbols-outlined text-[16px]">info</span>
+                        Bu markaya bağlı @Model.Cars.Count araç var — silme işlemi bu araçları etkileyebilir.
+                    </div>
+                }
+            </div>
+
+            <div class="flex justify-between items-center mt-xl">
+                <button type="submit" class="bg-[#22C55E] hover:bg-[#16A34A] text-white px-xl py-3 rounded-xl font-label-md flex items-center gap-2 transition-all shadow-sm active:scale-95">
+                    <span class="material-symbols-outlined text-[20px]">check_circle</span>
+                    Değişiklikleri Kaydet
+                </button>
+
+                <a asp-area="Admin" asp-controller="Brand" asp-action="Index"
+                   class="px-xl py-3 rounded-xl border border-outline-variant text-on-surface font-label-md hover:bg-surface-container-low transition-all">
+                    İptal
+                </a>
+            </div>
+        </form>
+
+        <form asp-area="Admin" asp-controller="Brand" asp-action="DeleteBrand" asp-route-id="@Model.BrandId" method="post"
+              onsubmit="return confirm('Bu markayı silmek istediğinize emin misiniz?');" class="mt-md">
+            <button type="submit" class="px-xl py-3 rounded-xl text-error font-label-md hover:bg-error/10 transition-all flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">delete</span>
+                Markayı Sil
+            </button>
+        </form>
+    </div>
+</main>
+
+<script>
+    function previewBrandLogo(url) {
+        const preview = document.getElementById('brandLogoPreview');
+        const placeholder = document.getElementById('brandPreviewPlaceholder');
+
+        if (url && url.trim().length > 0) {
+            preview.src = url;
+            preview.classList.remove('hidden');
+            placeholder.classList.add('hidden');
+        } else {
+            preview.classList.add('hidden');
+            placeholder.classList.remove('hidden');
+        }
+    }
+</script>

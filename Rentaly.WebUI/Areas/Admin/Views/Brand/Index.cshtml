@@ -1,0 +1,120 @@
+﻿@model List<Rentaly.EntityLayer.Entities.Brand>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var totalCars = Model.Sum(b => b.Cars?.Count ?? 0);
+    var topBrandId = Model.OrderByDescending(b => b.Cars?.Count ?? 0).FirstOrDefault()?.BrandId;
+}
+
+<main class="ml-[280px] pt-[72px] min-h-screen bg-[#F8FAFC]">
+    <div class="p-xl max-w-[1600px] mx-auto">
+        <!-- Page Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-2xl gap-md">
+            <div>
+                <h1 class="font-h1 text-h1 text-on-surface mb-xs">Marka Yönetimi</h1>
+                <p class="font-body-md text-body-md text-on-surface-variant">Sistemdeki araç markalarını yönetin ve performanslarını takip edin.</p>
+            </div>
+            <a asp-area="Admin" asp-controller="Brand" asp-action="CreateBrand"
+               class="bg-[#22C55E] hover:bg-[#16A34A] text-white px-lg py-3 rounded-xl font-label-md flex items-center gap-2 transition-all shadow-sm hover:shadow-md active:scale-95">
+                <span class="material-symbols-outlined text-[20px]">add</span>
+                Yeni Marka Ekle
+            </a>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-lg mb-2xl">
+            <div class="bg-white border border-outline-variant rounded-2xl p-lg flex items-center gap-lg shadow-sm">
+                <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-primary">stars</span>
+                </div>
+                <div>
+                    <p class="text-on-surface-variant font-label-sm uppercase tracking-wider">Toplam Marka</p>
+                    <h3 class="font-h2 text-h2 text-on-surface">@Model.Count</h3>
+                </div>
+            </div>
+            <div class="bg-white border border-outline-variant rounded-2xl p-lg flex items-center gap-lg shadow-sm">
+                <div class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-secondary">directions_car</span>
+                </div>
+                <div>
+                    <p class="text-on-surface-variant font-label-sm uppercase tracking-wider">Toplam Envanter</p>
+                    <h3 class="font-h2 text-h2 text-on-surface">@totalCars</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Brand Cards Grid -->
+        @if (Model.Any())
+        {
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-lg">
+                @foreach (var brand in Model)
+                {
+                    var carCount = brand.Cars?.Count ?? 0;
+
+                    <div class="group bg-white border border-outline-variant rounded-2xl overflow-hidden shadow-sm hover:shadow-[0px_8px_28px_rgba(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300">
+                        <div class="h-40 relative flex items-center justify-center bg-gradient-to-b from-surface-container-lowest to-surface-container-low border-b border-outline-variant p-xl">
+                            @if (!string.IsNullOrEmpty(brand.ImageUrl))
+                            {
+                                <img class="h-16 w-auto object-contain transition-transform duration-500 group-hover:scale-110" src="@brand.ImageUrl" alt="@brand.BrandName" />
+                            }
+                            else
+                            {
+                                <div class="w-16 h-16 rounded-full bg-white border border-outline-variant flex items-center justify-center shadow-sm">
+                                    <span class="material-symbols-outlined text-[28px] text-outline">directions_car</span>
+                                </div>
+                            }
+
+                            @if (brand.BrandId == topBrandId && carCount > 0)
+                            {
+                                <div class="absolute top-3 right-3">
+                                    <span class="bg-primary text-white px-2.5 py-1 rounded-full font-label-sm text-[10px] font-bold uppercase tracking-wide shadow-sm flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[12px]">trending_up</span>
+                                        En Çok Araç
+                                    </span>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="p-lg">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="font-h3 text-h3 text-on-surface">@brand.BrandName</h4>
+                                    <p class="text-on-surface-variant font-body-sm mt-0.5 flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[15px]">directions_car</span>
+                                        @carCount Araç
+                                    </p>
+                                </div>
+                                <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <a asp-area="Admin" asp-controller="Brand" asp-action="EditBrand" asp-route-id="@brand.BrandId"
+                                       class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-low text-on-surface-variant transition-colors" title="Düzenle">
+                                        <span class="material-symbols-outlined text-[18px]">edit</span>
+                                    </a>
+                                    <form asp-area="Admin" asp-controller="Brand" asp-action="Delete" asp-route-id="@brand.BrandId" method="post"
+                                          onsubmit="return confirm('Bu markayı silmek istediğinize emin misiniz?');" class="inline">
+                                        <button type="submit" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-error/10 text-error transition-colors" title="Sil">
+                                            <span class="material-symbols-outlined text-[18px]">delete</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="bg-white border border-dashed border-outline-variant rounded-2xl p-2xl flex flex-col items-center justify-center text-center">
+                <div class="w-16 h-16 rounded-full bg-surface-container-low flex items-center justify-center mb-lg">
+                    <span class="material-symbols-outlined text-[32px] text-outline">stars</span>
+                </div>
+                <h3 class="font-h3 text-h3 text-on-surface mb-xs">Henüz marka eklenmemiş</h3>
+                <p class="text-on-surface-variant font-body-md mb-lg">Filonuza araç eklemeye başlamadan önce bir marka oluşturun.</p>
+                <a asp-area="Admin" asp-controller="Brand" asp-action="CreateBrand"
+                   class="bg-[#22C55E] hover:bg-[#16A34A] text-white px-lg py-2.5 rounded-xl font-label-md flex items-center gap-2 transition-all">
+                    <span class="material-symbols-outlined text-[18px]">add</span>
+                    İlk Markayı Ekle
+                </a>
+            </div>
+        }
+    </div>
+</main>

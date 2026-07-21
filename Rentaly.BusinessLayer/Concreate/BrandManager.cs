@@ -33,7 +33,7 @@ namespace Rentaly.Businesslayer.Concreate
 
         public async Task<List<Brand>> TGetListAsync()
         {
-            return await _brandDal.GetListAsync();
+            return await _brandDal.TGetListAsync();  
         }
 
         public async Task TInsertAsync(Brand entity)
