@@ -1,151 +1,149 @@
-# 🚗 Rentaly — Enterprise Car Rental Management System
+# 🚗 Rentaly - Kurumsal Araç Kiralama Yönetim Sistemi
 
-Rentaly is a full-stack car rental platform built with **ASP.NET Core MVC**, designed around a clean **N-Tier Architecture** with a public-facing booking experience and a fully-featured **Admin Fleet Management Dashboard**. The project was built as a portfolio-grade demonstration of production patterns: layered architecture, EF Core relational modeling, server-rendered admin tooling, and real business logic (pricing, availability, fleet analytics) — not just CRUD scaffolding.
-
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Architecture](#architecture)
-- [Tech Stack](#tech-stack)
-- [Domain Model](#domain-model)
-- [Public Site Features](#public-site-features)
-- [Admin Dashboard Features](#admin-dashboard-features)
-- [Reporting & Exports](#reporting--exports)
-- [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [Engineering Notes & Design Decisions](#engineering-notes--design-decisions)
-- [Known Limitations / Roadmap](#known-limitations--roadmap)
+**Rentaly**, ASP.NET Core MVC ve N-Tier (Katmanlı) Mimari kullanılarak geliştirilmiş, hem müşteri tarafı hem de kapsamlı bir yönetim paneli barındıran uçtan uca bir araç kiralama platformudur. Proje; katmanlı mimari, ilişkisel veri modelleme ve gerçek iş mantığı (fiyatlandırma, müsaitlik durumu, filo analitiği) üzerine kurgulanmıştır.
 
 ---
 
-## Overview
+## 🚀 Teknolojiler ve Mimari Altyapı
 
-Rentaly simulates a real-world car rental business with two distinct experiences:
+### 🛠️ Teknik Yığın (Tech Stack)
+* **Framework:** ASP.NET Core MVC (.NET 10)
+* **Veritabanı:** MSSQL Server & Entity Framework Core (Code First + Migrations)
+* **Validasyon:** FluentValidation
+* **Mapping:** AutoMapper
+* **Raporlama:** ClosedXML (Excel) & QuestPDF (PDF)
+* **Frontend (Admin Panel):** Tailwind CSS, Material Symbols
+* **Frontend (Kullanıcı Tarafı):** Özelleştirilmiş HTML/CSS şablonu
 
-1. **Public Site** — customers browse the fleet, view detailed car pages with image galleries, and complete a multi-step booking flow with live price calculation.
-2. **Admin Panel** — fleet managers manage cars, brands, models, categories, branches, and bookings; monitor KPIs on a live dashboard; and generate exportable operational reports.
+### 🏗️ Kurumsal Mimari Yapısı (N-Tier Architecture)
+Proje 4 ana katman üzerine inşa edilmiştir:
 
-The project intentionally avoids "God controller" anti-patterns — business logic lives in a dedicated Business Layer, data access is abstracted behind repositories, and each admin module (Car, Brand, Model, Category, Branch, Booking) follows a consistent Controller → Service → DAL → EF Core chain.
+1. **Rentaly.WebUI:** Sunum katmanı. **Areas (Admin)** yapısı, **ViewComponent** kullanımı ve asenkron Controller'lar ile optimize edilmiştir.
+2. **Rentaly.BusinessLayer:** İş mantığının yürütüldüğü katman. `Abstract (Services)` ve `Concreate (Managers)` ayrımıyla servis odaklı çalışır.
+3. **Rentaly.DataAccessLayer:** Veri erişim katmanı. **Generic Repository Pattern** ile merkezi ve tekrar kullanılabilir bir veri erişim noktası sağlanmıştır.
+4. **Rentaly.EntityLayer:** Veritabanı tablolarına karşılık gelen, framework'ten bağımsız POCO sınıfları barındırır.
 
----
+## 💎 Uygulanan Design Patterns & Prensipler
 
-## Architecture
-
-Rentaly follows a **4-layer N-Tier Architecture**:
-
-```
-Rentaly.WebUI            → Presentation layer (MVC Controllers, Razor Views, Areas)
-Rentaly.BusinessLayer     → Business rules, validation (FluentValidation), orchestration
-Rentaly.DataAccessLayer   → Generic Repository Pattern + EF Core implementations
-Rentaly.EntityLayer       → POCO entities (no framework dependencies)
-```
-
-**Key architectural principles applied:**
-
-- **Generic Repository Pattern** (`IGenericDal<T>` / `GenericRepository<T>`) for baseline CRUD, extended per-entity with specific `Include()`-aware query methods (e.g. `GetCarWithDetailsByIdAsync`, `GetDetailsByIdAsync` for bookings) — avoiding both N+1 query issues and over-fetching on list views.
-- **Manager/Service Layer** (`CarManager`, `BookingManager`, etc.) sits between controllers and the DAL, so controllers never talk to EF Core directly.
-- **Area-based separation**: the Admin panel lives entirely under `Areas/Admin`, cleanly isolated from the public site's routes, views, and layout.
-- **ViewModels over raw entities** wherever a view needs data shaped differently than the domain model (e.g. `CarModelRowViewModel`, `BookingListViewModel`, `ReportsViewModel`) — entities are never bound directly to complex forms, keeping model binding predictable.
+* **Generic Repository Pattern:** `IGenericDal<T>` / `GenericRepository<T>` üzerinden merkezi CRUD işlemleri; her entity kendi ihtiyacına özel `Include()` zincirine sahip ek metodlarla genişletilmiştir (örn. `GetCarWithDetailsByIdAsync`).
+* **Service (Manager) Katmanı:** Controller'lar veritabanına asla doğrudan erişmez; her işlem `CarManager`, `BookingManager` gibi servisler üzerinden yürütülür.
+* **Dependency Injection:** Tüm servis ve repository bağımlılıkları `Program.cs` üzerinden gevşek bağlı (loosely coupled) şekilde yönetilir.
+* **ViewModel Kullanımı:** Formlar ve liste sayfaları asla doğrudan Entity'e bağlanmaz; her sayfa kendi ihtiyacına özel bir ViewModel (`CarModelRowViewModel`, `BookingListViewModel`, `ReportsViewModel` vb.) ile beslenir.
+* **Alan Bazlı Görselleştirme (Display Helper Pattern):** Araç durumu, aktivite ikonları gibi tekrar eden görsel mantıklar (`CarStatusDisplayHelper`, `ActivityDisplayHelper`) tek bir yerden yönetilir.
 
 ---
 
-## Tech Stack
+## 🖼️ Kullanıcı Arayüzü ve Dinamik Yönetim
 
-| Layer | Technology |
-|---|---|
-| Framework | ASP.NET Core MVC (.NET 10) |
-| ORM | Entity Framework Core (Code-First + Migrations) |
-| Database | Microsoft SQL Server |
-| Validation | FluentValidation |
-| Mapping | AutoMapper |
-| Frontend (Admin) | Tailwind CSS, Google Material Symbols |
-| Frontend (Public) | Custom CSS on top of the Rentaly HTML template |
-| Excel Export | ClosedXML |
-| PDF Export | QuestPDF |
-| Icons | Material Symbols Outlined |
 
----
 
-## Domain Model
+<img width="1884" height="879" alt="Ekran görüntüsü 2026-07-20 204224" src="https://github.com/user-attachments/assets/773bcb61-112f-450a-8528-0ebca1d958dd" />
+<img width="1890" height="865" alt="Ekran görüntüsü 2026-07-20 204238" src="https://github.com/user-attachments/assets/c77471e9-597d-47a6-86dc-d96a635408d5" />
+<img width="1890" height="864" alt="Ekran görüntüsü 2026-07-20 204248" src="https://github.com/user-attachments/assets/d6039a4a-528c-4c22-bc67-6f9f4f769729" />
+<img width="1894" height="877" alt="Ekran görüntüsü 2026-07-20 204331" src="https://github.com/user-attachments/assets/ee57bd95-6c1c-48f7-8c81-c54a0d0dc6dc" />
 
-Core entities and how they relate:
+### 🏎️ 1. Araç Detay Sayfası ve Galeri
+Kullanıcıların seçtikleri araç hakkında tüm teknik detaylara ulaştığı sayfadır.
+<img width="1889" height="653" alt="Ekran görüntüsü 2026-07-20 204358" src="https://github.com/user-attachments/assets/87e2c5af-68e4-4a2a-8142-c506ce117097" />
+<img width="1886" height="867" alt="Ekran görüntüsü 2026-07-20 204424" src="https://github.com/user-attachments/assets/f8997594-218c-47c5-930a-4bbbddd5973a" />
+<img width="1896" height="867" alt="Ekran görüntüsü 2026-07-20 204436" src="https://github.com/user-attachments/assets/d69ab637-f603-4def-824e-efb73e85c603" />
 
-```
-Brand ───┬──< CarModel
-         └──< Car >──┬── Category
-                     ├── VehicleType
-                     ├── Branch
-                     ├── CarImage (1-to-many gallery)
-                     └── Status (enum: Available / Rented / Maintenance)
 
-Branch ──< Car
-Branch ──< Booking (as PickUpBranch)
-Branch ──< Booking (as DropOffBranch)   ← dual FK to the same table
+* **Dinamik Görsel Galerisi:** Ayrı bir `CarImage` tablosu üzerinden çoklu görsel desteği — tıklanabilir thumbnail'ler ve ana önizleme görseli. Galeri boşsa aracın tekil kapak görseline otomatik geri döner.
+* **Teknik Özellik Tablosu:** Kategori, araç tipi, koltuk/bagaj kapasitesi, yakıt tipi, kilometre, şube ve müsaitlik durumu veritabanından anlık olarak listelenir.
+* **"Araç Hakkında" Bölümü:** Aracın tanıtım metni, galeri görselinin hemen altında ayrı bir kart olarak sunulur.
 
-Booking >── Car
-Booking >── Branch (PickUp)
-Booking >── Branch (DropOff)
+<img width="1896" height="872" alt="Ekran görüntüsü 2026-07-20 204446" src="https://github.com/user-attachments/assets/5b5345b6-adb0-4985-9363-df3f7a229f6a" />
+<img width="1882" height="873" alt="Ekran görüntüsü 2026-07-20 204459" src="https://github.com/user-attachments/assets/f48c3179-e328-4a32-aa46-f223aa148e8d" />
 
-Activity   → system-wide audit trail (car added, customer created, rental completed, etc.)
-```
+### 💳 2. Dinamik Rezervasyon Sistemi ve Otomatik Fiyat Hesaplama
+* **Özel Araç Seçim Menüsü:** Native `<select>` yerine, görsel + araç adı + fiyat gösteren özel bir dropdown yapısı.
+* **Otomatik Ücret Hesaplama:** Alış ve dönüş tarihleri seçildiği anda `(Gün Sayısı × Günlük Ücret)` formülüyle toplam tutar anlık olarak hesaplanır ve kullanıcıya gösterilir.
+* **Sunucu Taraflı Doğrulama:** İstemci tarafında hesaplanan tutara güvenilmez — sunucu, rezervasyon kaydedilmeden önce toplam tutarı veritabanındaki güncel fiyatla **bağımsız olarak yeniden hesaplar**. Bu, istemci tarafı manipülasyonuna karşı bilinçli bir güvenlik önlemidir.
+* **Rezervasyon Onay Sayfası:** Rezervasyon numarası, araç özeti, tarih/şube bilgisi ve toplam tutarı içeren bir onay ekranı.
 
-**Notable modeling decisions:**
+<img width="1892" height="864" alt="Ekran görüntüsü 2026-07-20 204555" src="https://github.com/user-attachments/assets/4233a3fb-b283-4ff3-83a7-6f3702c81c4d" />
+<img width="1883" height="862" alt="Ekran görüntüsü 2026-07-20 205339" src="https://github.com/user-attachments/assets/70a65835-dd31-4bfb-8c1e-59a2251af5cb" />
+<img width="1889" height="849" alt="Ekran görüntüsü 2026-07-20 205348" src="https://github.com/user-attachments/assets/17af1ff3-d478-41c0-bd76-2aa8194510c6" />
 
-- **`Booking` has two foreign keys into `Branch`** (`PickUpBranchId` / `DropOffBranchId`) to support one-way rentals. This required explicitly configuring `DeleteBehavior.Restrict` on both relationships in `OnModelCreating` — SQL Server rejects `CASCADE` when a table has multiple paths to the same parent table (a pattern that recurred with `CarModel → Brand` once `Car` already had a direct FK to `Brand`).
-- **`CarStatus` is a proper enum** (`Available`, `Rented`, `Maintenance`), not a pair of overloaded booleans — this eliminates the "is it unavailable because it's rented or because it's in maintenance?" ambiguity that a naive `IsAvailable: bool` design would create.
-- **`Activity` is type-driven, not free-text**: an `ActivityType` enum drives icon and color selection via a display-helper pattern, rather than storing icon names/colors per row.
+
+### 📑 3. Filtrelenebilir Araç Listeleme
+* **Çok Boyutlu Filtreleme:** Marka, model, kategori ve serbest metin (marka/model/plaka) araması bir arada kullanılabilir.
+* **Sunucu Taraflı Sayfalama:** Filtre ve sayfa numarası birlikte URL'de taşınır; sayfa değiştirince aktif filtre kaybolmaz.
+* **Durum Rozetleri:** Müsait / Kirada / Bakımda durumları, tek bir merkezi yardımcı sınıf üzerinden tutarlı renk ve etiketle gösterilir.
+
+<img width="1886" height="867" alt="Ekran görüntüsü 2026-07-20 204424" src="https://github.com/user-attachments/assets/3a911b7a-9391-404b-833f-285b61e18449" />
 
 ---
 
-## Public Site Features
+## 🛠️ Gelişmiş Admin Yönetim Paneli
 
-- **Car Details Page**
-  - Image gallery with clickable thumbnails and a main preview, backed by a dedicated `CarImage` table (falls back gracefully to the car's single cover `ImageUrl` if no gallery images exist).
-  - "About the vehicle" section, technical specification table, and a booking CTA — all data-driven, no hardcoded copy.
-- **Booking Flow**
-  - Custom car-select dropdown (image + name + live price, not a native `<select>`) synced with a live total-price calculator (`days × dailyPrice`) that recalculates client-side as pick-up/return dates change.
-  - **Server-side price recalculation on submit** — the client-side total is never trusted; the controller independently recomputes `days * car.DailyPrice` before persisting, closing the obvious "tamper the JS" attack vector.
-  - Booking confirmation page with a generated reservation code, full itinerary summary, and branch/date/price breakdown.
+### 📈 1. Sistem Panoraması (Dashboard)
+* **Canlı İstatistik Kartları:** Toplam araç, toplam rezervasyon ve toplam şube sayısı gerçek verilerden hesaplanır.
+* **Filo Büyüme Grafiği:** Harici bir kütüphaneye bağımlı olmadan, el yapımı SVG çizgi/alan grafiği ile aracın sisteme eklenme tarihine (`CreatedDate`) göre aylık kümülatif filo büyümesi gösterilir; 6/12 aylık aralık seçilebilir.
+* **Son Aktiviteler:** Bağımsız bir `ViewComponent` olarak çalışan, kendi `Activity` tablosundan beslenen ve "2 dakika önce" gibi göreceli zaman etiketleri üreten bir akış.
+
+<img width="1907" height="939" alt="Ekran görüntüsü 2026-07-21 125544" src="https://github.com/user-attachments/assets/91e2c365-0cbb-442f-a992-efca06d4413f" />
+
+
+### 🚜 2. Araç ve Filo Yönetimi
+* **Akıllı Filtreleme + Sayfalama:** Marka, model, kategori bazlı filtreleme; sayfa başına 5 kayıt gösterimi.
+* **Esnek Görsel Yönetimi:** Yeni araç eklerken hem **dosya yükleme** hem de **görsel URL'i yapıştırma** desteklenir, ikisi için de anlık önizleme mevcuttur; hiçbiri girilmezse otomatik bir placeholder görsele düşülür.
+* **Durum Yönetimi:** Araç durumu (`Available` / `Rented` / `Maintenance`) bir enum ile tek noktadan yönetilir — iki ayrı boolean alanla karışıklık yaratmak yerine net bir durum makinesi kullanılmıştır.
+
+<img width="1916" height="938" alt="Ekran görüntüsü 2026-07-21 125555" src="https://github.com/user-attachments/assets/e57f31ed-76e6-4744-9460-4efec7f0d785" />
+<img width="1912" height="942" alt="Ekran görüntüsü 2026-07-21 125614" src="https://github.com/user-attachments/assets/2e70dbc2-d052-4a2d-bed2-57071f63f5a6" />
+<img width="1904" height="914" alt="Ekran görüntüsü 2026-07-21 141326" src="https://github.com/user-attachments/assets/5d276006-8960-42ec-903b-19af75689555" />
+<img width="1901" height="913" alt="Ekran görüntüsü 2026-07-21 143132" src="https://github.com/user-attachments/assets/17b77d02-3d6f-4f3e-a83d-fb33eaa82d43" />
+<img width="1899" height="903" alt="Ekran görüntüsü 2026-07-21 144433" src="https://github.com/user-attachments/assets/77ef8cb4-a2c9-40ba-af52-bca34b66b2bc" />
+<img width="1913" height="903" alt="Ekran görüntüsü 2026-07-21 144458" src="https://github.com/user-attachments/assets/e9792b48-af71-4b7f-a1c5-30aa9a5087f3" />
+
+
+### 🔖 3. Marka, Model, Kategori ve Şube Yönetimi
+* Her modül; **listeleme, ekleme, düzenleme ve silme** işlemlerini tam olarak destekler.
+* Listelerdeki metrikler (marka başına araç sayısı, filo payı %, kategori taban fiyatı, şube doluluk oranı) **canlı olarak ilişkisel verilerden hesaplanır**, ayrı bir alanda tekrar saklanmaz.
+* Yönetici avatarları, dış bir görsele bağımlı olmadan isim baş harflerinden otomatik üretilir.
+
+<img width="1908" height="913" alt="Ekran görüntüsü 2026-07-21 153305" src="https://github.com/user-attachments/assets/20cba98a-1683-41ca-b6bf-33a2c34f0102" />
+<img width="1908" height="914" alt="Ekran görüntüsü 2026-07-21 151640" src="https://github.com/user-attachments/assets/749e22f9-b755-48f9-8f53-1bf06232a713" />
+<img width="1911" height="912" alt="Ekran görüntüsü 2026-07-21 153345" src="https://github.com/user-attachments/assets/c33c9209-0142-4f3c-9433-3c4e22d860ce" />
+<img width="1907" height="917" alt="Ekran görüntüsü 2026-07-21 160051" src="https://github.com/user-attachments/assets/4fc4f901-bab2-42f7-bf2b-d10b582b47a5" />
+<img width="1903" height="902" alt="Ekran görüntüsü 2026-07-21 160103" src="https://github.com/user-attachments/assets/fb6677ef-b48d-435c-89ca-58a3b63466fe" />
+<img width="1906" height="915" alt="Ekran görüntüsü 2026-07-21 160126" src="https://github.com/user-attachments/assets/0142872f-6554-4a03-89fd-1ac01fe23d22" />
+<img width="1895" height="911" alt="Ekran görüntüsü 2026-07-21 161353" src="https://github.com/user-attachments/assets/00fdf4a9-e034-4185-9467-92591608e5d2" />
+<img width="1890" height="913" alt="Ekran görüntüsü 2026-07-21 161405" src="https://github.com/user-attachments/assets/525b4c7f-ed32-4aed-a1d5-8ec5ea499992" />
+<img width="1895" height="911" alt="Ekran görüntüsü 2026-07-21 161414" src="https://github.com/user-attachments/assets/6836d672-e655-48da-be8d-d5137b496119" />
+<img width="1897" height="905" alt="Ekran görüntüsü 2026-07-21 162118" src="https://github.com/user-attachments/assets/8ec23f99-9a76-4502-b67a-47da07a0ba31" />
+<img width="1899" height="904" alt="Ekran görüntüsü 2026-07-21 162130" src="https://github.com/user-attachments/assets/5f238e7d-acb6-4d2e-9444-1fdddbefc335" />
+<img width="1887" height="915" alt="Ekran görüntüsü 2026-07-21 162139" src="https://github.com/user-attachments/assets/4052f23b-1e37-4df6-9ca8-7d3ee8514cdf" />
+
+
+### 👥 4. Rezervasyon Yönetimi
+* **Otomatik Durum Belirleme:** Rezervasyon durumu (Onaylandı / Devam Ediyor / Tamamlandı / İptal Edildi) tarihlerden **anlık olarak türetilir** — sadece "İptal Edildi" durumu elle işaretlenir, geri kalanı hiçbir arka plan görevine ihtiyaç duymadan otomatik değişir.
+* **Detay Görüntüleme ve İptal:** Her rezervasyon için ayrı bir detay sayfası (araç, müşteri, tarih, şube, ödeme bilgisi) ve onay istenen bir iptal işlemi mevcuttur.
+* **Operasyonel İçgörüler:** İptal oranı, aktif/gelecek rezervasyon sayısı, en popüler teslimat noktaları ve anlık filo kullanım oranı.
+
+<img width="1895" height="915" alt="Ekran görüntüsü 2026-07-21 163355" src="https://github.com/user-attachments/assets/ef70b413-c3db-47b2-ad82-fb9d460bf33e" />
+<img width="1886" height="916" alt="Ekran görüntüsü 2026-07-21 163405" src="https://github.com/user-attachments/assets/a4a42b36-6949-49fe-8455-c7b357aacdee" />
+
+
+
+### 📊 5. Raporlama ve Dışa Aktarma
+* **Şube ve durum bazlı filtreleme** ile detaylı araç raporu.
+* **Hesaplanmış Metrikler:** Her araç için doluluk oranı (kiralanan gün / filoya katılalı geçen gün) ve toplam kazanç (iptal edilmemiş rezervasyonların toplamı) anlık hesaplanır.
+* **Excel Dışa Aktarma (ClosedXML):** Aktif filtreye göre biçimlendirilmiş `.xlsx` dosyası üretir.
+* **PDF Dışa Aktarma (QuestPDF):** Native kütüphane bağımlılığı olmadan, tamamen .NET içinde çalışan kod tabanlı PDF üretimi.
+
+<img width="1896" height="907" alt="Ekran görüntüsü 2026-07-21 164421" src="https://github.com/user-attachments/assets/6fbd5514-fcfe-4e3b-b29d-109f86e60d95" />
+<img width="1892" height="915" alt="Ekran görüntüsü 2026-07-21 164428" src="https://github.com/user-attachments/assets/fda6a861-db26-48bb-81ad-5eda95094347" />
+<img width="1899" height="907" alt="Ekran görüntüsü 2026-07-21 164438" src="https://github.com/user-attachments/assets/e72d2519-b22a-4ab9-8811-4a830d90a4c2" />
+<img width="1331" height="826" alt="Ekran görüntüsü 2026-07-21 164821" src="https://github.com/user-attachments/assets/a5cf51d2-0c50-425b-861c-55dddedd1189" />
+<img width="1914" height="1037" alt="Ekran görüntüsü 2026-07-21 164840" src="https://github.com/user-attachments/assets/745f80c9-a711-49eb-b59e-9e538a4c1e58" />
+
 
 ---
 
-## Admin Dashboard Features
-
-All admin modules follow the same shape: filterable/paginated list view, Create/Edit forms bound to the real entity, soft server-side validation, and delete via a confirmation-guarded POST form (never a bare GET link, to avoid accidental/CSRF-triggerable deletions).
-
-- **Dashboard**
-  - Live KPI cards (total cars, total bookings, total branches) computed from real data, not placeholders.
-  - **Fleet Growth chart** — a hand-rolled SVG line/area chart (no charting library dependency) driven by `Car.CreatedDate`, computing cumulative fleet size per month over a selectable range (6/12 months) via a JSON endpoint.
-  - **Recent Activities** widget as an isolated `ViewComponent`, backed by its own `Activity` table and a relative-time helper (`ToTurkishTimeAgo()`) for "2 dakika önce" / "3 saat önce" style timestamps.
-- **Vehicle Management** (`Car`)
-  - Server-side filtering (brand, model, category, free-text search across brand/model/plate) combined with pagination — filters and page state persist together via query string, so paging never silently drops an active filter.
-  - Create/Edit forms support **both file upload and pasted image URL** for the cover photo, with live client-side preview either way, and a placeholder fallback so a missing image can never violate the `NOT NULL` constraint on `ImageUrl`.
-  - Status badges (Available/Rented/Maintenance) rendered via a shared `CarStatusDisplayHelper` so color/label logic exists in exactly one place.
-- **Brand / Model / Category / Branch Management**
-  - Each supports full CRUD, with list views showing **computed** metrics (car count per brand, fleet share %, base price per category, occupancy per branch) derived live from relationships rather than duplicated/staled fields.
-  - Manager-name avatars are generated from initials rather than depending on external headshot URLs.
-- **Booking Management**
-  - Status (Confirmed / Ongoing / Completed / Cancelled) is **derived from dates at read-time**, not manually maintained — only `Cancelled` is an explicit, persisted state. This means a booking automatically "becomes" Completed the moment its drop-off date passes, with zero admin intervention or background job required.
-  - Row-level action menu: **View Details** (full booking breakdown — customer, vehicle, dates, branches, payment) and **Cancel** (guarded, hidden once a booking is already completed/cancelled).
-  - Dashboard insights: cancellation rate, upcoming vs. active rentals, top drop-off branches, and live fleet utilization %.
-- **Reports**
-  - Filterable by branch and car status, paginated on-screen.
-  - Per-car computed metrics: occupancy % (rented-days ÷ days-since-added-to-fleet) and lifetime earnings (sum of non-cancelled bookings for that car).
-  - Branch-level distribution (available/rented/maintenance split) rendered as both a stacked bar and a donut chart.
-
----
-
-## Reporting & Exports
-
-- **Excel export** via **ClosedXML** — generates a fully-formatted `.xlsx` with bold headers and auto-sized columns, respecting whatever branch/status filter is currently active on screen.
-- **PDF export** via **QuestPDF** — a fluent, code-first PDF layout (landscape A4, header/footer, styled table) with zero native-binary dependencies.
-  > The project initially used **DinkToPdf**, which wraps the native `libwkhtmltox` library. This introduced a `DllNotFoundException` in the target environment (a common pain point with DinkToPdf across OS/architecture combinations). The project migrated to **QuestPDF**, which is pure .NET and eliminates the native dependency entirely — a deliberate architectural correction made mid-project once the tooling risk became apparent.
-
----
-
-## Project Structure
+## 📂 Proje Yapısı
 
 ```
 Rentaly.EntityLayer/
@@ -156,77 +154,65 @@ Rentaly.DataAccessLayer/
   RepositoryDesignPattern/  → GenericRepository<T>
   EntityFramework/          → EfCarDal, EfBookingDal, ..., RentalyContext
 
-Rentaly.BusinessLayer/
+Rentaly.Businesslayer/
   Abstract/                 → ICarService, IBookingService, ...
   Concreate/                → CarManager, BookingManager, ...
-  ValidationRules/           → FluentValidation validators
+  ValidationRules/           → FluentValidation validator'ları
 
 Rentaly.WebUI/
-  Controllers/               → Public-facing controllers (Car, Booking)
-  Views/                     → Public Razor views
+  Controllers/               → Kullanıcı taraflı controller'lar (Car, Booking)
+  Views/                     → Kullanıcı taraflı Razor view'ları
   Areas/Admin/
     Controllers/             → CarController, BrandController, CarModelController,
                                 CategoryController, BranchController, BookingController,
                                 DashboardController, ReportsController
-    Models/                  → Admin ViewModels (list/form/report models)
-    Views/                   → Admin Razor views + Shared/_AdminLayout.cshtml
+    Models/                  → Admin ViewModel'leri
+    Views/                   → Admin Razor view'ları + Shared/_AdminLayout.cshtml
   Helpers/                   → CarStatusDisplayHelper, ActivityDisplayHelper, TimeAgoHelper
 ```
 
 ---
 
-## Getting Started
-
-### Prerequisites
-
-- .NET 10 SDK
-- SQL Server (LocalDB or full instance)
-- Visual Studio 2022+ (or any IDE with EF Core tooling)
-
-### Setup
+## ⚙️ Kurulum
 
 ```bash
-# 1. Clone the repository
+# 1. Projeyi klonla
 git clone <repo-url>
 cd Rentaly
 
-# 2. Update the connection string in appsettings.json
-#    "ConnectionStrings:RentalyContext"
+# 2. appsettings.json içindeki bağlantı dizesini güncelle
 
-# 3. Apply migrations
-Add-Migration InitialCreate   # if starting fresh
+# 3. Migration'ları uygula
+Add-Migration InitialCreate
 Update-Database
 
-# 4. Restore packages & run
+# 4. Paketleri yükle ve çalıştır
 dotnet restore
 dotnet run --project Rentaly.WebUI
 ```
 
-### First-run checklist
+**İlk çalıştırma öncesi:** Araç ekleyebilmek için önce en az bir Marka, Model, Kategori, Araç Tipi ve Şube kaydı oluşturulmalıdır — araç ekleme/düzenleme formlarındaki dropdown'lar bu tablolardan beslenir.
 
-- Seed at least one `Brand`, `CarModel`, `Category`, `VehicleType`, and `Branch` before creating cars — the Create/Edit Car forms populate their dropdowns from these tables.
-- The Admin panel is available at `/Admin/Dashboard`.
-
----
-
-## Engineering Notes & Design Decisions
-
-A few decisions worth calling out for anyone reviewing the codebase:
-
-- **Cascade-delete conflicts were a recurring, deliberately-handled pattern.** Any time a child table has more than one path back to the same parent (`Booking → Branch` via two FKs, `CarModel → Brand` alongside `Car → Brand`), SQL Server refuses `ON DELETE CASCADE` due to "multiple cascade paths." Rentaly resolves each of these explicitly with `DeleteBehavior.Restrict` in `OnModelCreating`, rather than suppressing the error at the database level.
-- **`ModelState` and navigation properties.** Entities with collection navigation properties (`Car.Images`, `Brand.Cars`, `Category.Cars`) triggered spurious `"The X field is required"` validation failures on POST, since those collections are never populated by the form. Every Create/Edit POST action explicitly calls `ModelState.Remove(...)` for these properties rather than loosening validation globally.
-- **List queries vs. detail queries are intentionally separate.** Generic `TGetListAsync()` methods only `Include()` what a list view needs; a heavier `GetDetailsByIdAsync()`/`GetCarWithDetailsByIdAsync()` exists per-entity for pages that need the full navigation graph. This avoids paying the JOIN cost of a detail page on every list render.
-- **No client-side trust for pricing.** All monetary calculations (booking totals, report earnings) are computed server-side from persisted data, even where a client-side preview exists for UX purposes.
+Admin paneline `/Admin/Dashboard` üzerinden erişilir.
 
 ---
 
-## Known Limitations / Roadmap
+## 🧠 Mimari Kararlar ve Öğrenilenler
 
-- Booking creation from the Admin panel (as opposed to cancellation/viewing) is not yet implemented.
-- Car model → Brand cascading dropdown filtering (client-side, so selecting a Brand narrows the Model list) is a natural next step but not yet wired up.
-- No authentication/authorization layer is yet enforced on the Admin Area — intended for a future pass (ASP.NET Core Identity + role-based policies).
-- Reports currently compute occupancy against "days since added to fleet"; a rolling 30/90-day window would be a more actionable metric for a real fleet manager.
+* **Çoklu Cascade Yolu Sorunu:** Bir tabloya birden fazla foreign key yolundan ulaşılabildiğinde (`Booking → Branch` çift FK, `CarModel → Brand` ile `Car → Brand` birlikte) SQL Server `CASCADE` silmeyi reddeder. Bu proje boyunca karşılaşılan bu senaryoların her biri, `OnModelCreating` içinde ilgili ilişkiye açıkça `DeleteBehavior.Restrict` tanımlanarak çözülmüştür.
+* **Navigation Property'lerin ModelState Üzerindeki Etkisi:** `Car.Images`, `Brand.Cars`, `Category.Cars` gibi koleksiyon tipi alanlar formdan hiçbir zaman gelmediği için sahte "zorunlu alan" doğrulama hataları üretiyordu. Genel doğrulamayı gevşetmek yerine, ilgili her Create/Edit POST action'ında `ModelState.Remove(...)` ile bu alanlar açıkça hariç tutulmuştur.
+* **Liste ve Detay Sorgularının Ayrılması:** Liste görünümleri sadece ihtiyaç duyduğu ilişkileri `Include` eder; detay sayfaları için ayrı, daha kapsamlı Include zincirine sahip metodlar (`GetCarWithDetailsByIdAsync`, `GetDetailsByIdAsync`) tanımlanmıştır — böylece liste sayfaları gereksiz JOIN maliyeti taşımaz.
+* **PDF Kütüphanesi Değişimi:** Proje başlangıçta `DinkToPdf` ile geliştirildi, ancak native `libwkhtmltox` bağımlılığı hedef ortamda `DllNotFoundException` hatasına yol açtı. Bu sorun, tamamen .NET içinde çalışan ve native bağımlılık gerektirmeyen **QuestPDF**'e geçilerek kalıcı olarak çözülmüştür.
 
 ---
 
-*Built as a hands-on exploration of N-Tier architecture, EF Core relational modeling, and admin-tooling UX in ASP.NET Core MVC.*
+## 🔭 Yol Haritası
+
+* Admin panelinden doğrudan rezervasyon oluşturma akışı henüz eklenmedi.
+* Marka seçimine göre model dropdown'unu istemci tarafında filtreleyen kademeli (cascading) seçim yapısı planlanıyor.
+* Admin Area için kimlik doğrulama/yetkilendirme (ASP.NET Core Identity + rol bazlı politika) henüz uygulanmadı.
+* Raporlardaki doluluk oranı şu an "filoya katılalı geçen gün" bazlı hesaplanıyor; ileride hareketli 30/90 günlük pencereye geçilmesi daha isabetli bir metrik sunacaktır.
+
+---
+
+*ASP.NET Core MVC üzerinde N-Tier mimari, EF Core ilişkisel modelleme ve admin panel UX'i üzerine uygulamalı bir öğrenme projesi olarak geliştirilmiştir.*
