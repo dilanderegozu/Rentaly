@@ -9,5 +9,6 @@ namespace Rentaly.Businesslayer.Abstract
 {
     public interface ICategoryService:IGenericService<Category>
     {
+        Task<List<Category>> TGetListAsync();
     }
 }

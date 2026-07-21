@@ -1,0 +1,59 @@
+﻿@model Rentaly.WebUI.Areas.Admin.Models.CarModelFormViewModel
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<main class="pt-[72px] pl-[280px] min-h-screen">
+    <div class="p-xl max-w-2xl mx-auto">
+        <nav class="flex items-center gap-xs font-label-sm text-label-sm text-on-surface-variant mb-md">
+            <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="hover:text-primary transition-colors">Dashboard</a>
+            <span class="material-symbols-outlined text-sm">chevron_right</span>
+            <a asp-area="Admin" asp-controller="CarModel" asp-action="Index" class="hover:text-primary transition-colors">Model Yönetimi</a>
+            <span class="material-symbols-outlined text-sm">chevron_right</span>
+            <span class="text-on-surface">Yeni Model</span>
+        </nav>
+
+        <h1 class="font-h1 text-h1 text-on-surface mb-xs">Yeni Model Ekle</h1>
+        <p class="font-body-md text-on-surface-variant mb-2xl">Bir markaya bağlı yeni araç modeli tanımlayın.</p>
+
+        <form asp-area="Admin" asp-controller="CarModel" asp-action="Create" method="post">
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm space-y-lg">
+
+                <div class="space-y-2">
+                    <label class="font-label-md text-on-surface">Marka <span class="text-primary">*</span></label>
+                    <select asp-for="CarModel.BrandId" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md bg-white">
+                        <option value="">Marka Seçin</option>
+                        @foreach (var brand in Model.Brands)
+                        {
+                            <option value="@brand.BrandId">@brand.BrandName</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="font-label-md text-on-surface">Model Adı <span class="text-primary">*</span></label>
+                    <input asp-for="CarModel.ModelName" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus text-body-md" placeholder="Örn: Clio" type="text" />
+                </div>
+
+                <div class="flex items-center justify-between py-2">
+                    <div>
+                        <p class="font-label-md text-on-surface font-bold">Aktif Model</p>
+                        <p class="font-label-sm text-on-surface-variant">Listelerde ve araç eklerken gösterilsin mi?</p>
+                    </div>
+                    <input asp-for="CarModel.IsActive" type="checkbox" class="w-5 h-5" checked />
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-md mt-xl">
+                <a asp-area="Admin" asp-controller="CarModel" asp-action="Index"
+                   class="px-xl py-3 rounded-xl border border-outline-variant text-on-surface font-label-md hover:bg-surface-container-low transition-all">
+                    İptal
+                </a>
+                <button type="submit" class="bg-[#22C55E] hover:bg-[#16A34A] text-white px-xl py-3 rounded-xl font-label-md flex items-center gap-2 transition-all shadow-sm active:scale-95">
+                    <span class="material-symbols-outlined text-[20px]">check_circle</span>
+                    Modeli Kaydet
+                </button>
+            </div>
+        </form>
+    </div>
+</main>

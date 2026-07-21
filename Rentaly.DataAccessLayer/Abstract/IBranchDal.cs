@@ -7,5 +7,6 @@ namespace Rentaly.DataAccessLayer.Abstract
 {
     public interface IBranchDal:IGenericDal<Branch>
     {
+        Task<List<Branch>> TGetListAsync();
     }
 }

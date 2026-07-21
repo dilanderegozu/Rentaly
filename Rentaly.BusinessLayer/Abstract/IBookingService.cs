@@ -9,5 +9,6 @@ namespace Rentaly.BusinessLayer.Abstract
     public interface IBookingService:IGenericService<Booking>
     {
         Task<Booking> GetBookingWithDetailsByIdAsync(int id);
+        Task<Booking> GetDetailsByIdAsync(int id);
     }
 }

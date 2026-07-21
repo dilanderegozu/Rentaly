@@ -1,0 +1,224 @@
+﻿@model Rentaly.WebUI.Areas.Admin.Models.CarModelListViewModel
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<main class="pt-[72px] pl-[280px] min-h-screen">
+    <div class="p-xl space-y-xl">
+        <div class="flex justify-between items-end">
+            <div class="space-y-sm">
+                <nav class="flex items-center gap-xs font-label-sm text-label-sm text-on-surface-variant">
+                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="hover:text-primary transition-colors">Dashboard</a>
+                    <span class="material-symbols-outlined text-sm">chevron_right</span>
+                    <span class="text-on-surface">Model Yönetimi</span>
+                </nav>
+                <h2 class="font-h1 text-h1 text-on-surface">Model Yönetimi</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant opacity-80">Sistemdeki araç modellerini listeleyin, düzenleyin ve yeni modeller ekleyin.</p>
+            </div>
+            <a asp-area="Admin" asp-controller="CarModel" asp-action="Create"
+               class="bg-[#22C55E] text-white px-lg py-[12px] rounded-lg font-label-md text-label-md flex items-center gap-sm hover:bg-[#16A34A] transition-all shadow-sm hover:shadow-md">
+                <span class="material-symbols-outlined">add_circle</span>
+                Yeni Model Ekle
+            </a>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
+            <div class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl flex items-start justify-between shadow-sm">
+                <div class="space-y-sm">
+                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Toplam Model</p>
+                    <h3 class="font-display text-display leading-none">@Model.TotalModelCount</h3>
+                </div>
+                <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined">directions_car</span>
+                </div>
+            </div>
+            <div class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl flex items-start justify-between shadow-sm">
+                <div class="space-y-sm">
+                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Aktif Modeller</p>
+                    <h3 class="font-display text-display leading-none">@Model.ActiveModelCount</h3>
+                </div>
+                <div class="w-10 h-10 bg-[#22C55E]/10 rounded-lg flex items-center justify-center text-[#22C55E]">
+                    <span class="material-symbols-outlined">check_circle</span>
+                </div>
+            </div>
+            <div class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl flex items-start justify-between shadow-sm">
+                <div class="space-y-sm">
+                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">En Popüler</p>
+                    <h3 class="font-h2 text-h2 leading-tight mt-sm">@Model.MostPopularModelName</h3>
+                </div>
+                <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center text-secondary">
+                    <span class="material-symbols-outlined">trending_up</span>
+                </div>
+            </div>
+            <div class="bg-surface-container-lowest border border-outline-variant p-lg rounded-xl flex items-start justify-between shadow-sm">
+                <div class="space-y-sm">
+                    <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Yeni Eklenen</p>
+                    <div class="flex items-baseline gap-xs">
+                        <h3 class="font-display text-display leading-none">@Model.NewThisMonthCount</h3>
+                        <span class="font-label-md text-label-md text-on-surface-variant">(Bu Ay)</span>
+                    </div>
+                </div>
+                <div class="w-10 h-10 bg-tertiary-container/20 rounded-lg flex items-center justify-center text-tertiary">
+                    <span class="material-symbols-outlined">new_releases</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters and Table -->
+        <div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+            <form asp-area="Admin" asp-controller="CarModel" asp-action="Index" method="get"
+                  class="p-lg border-b border-outline-variant flex flex-wrap gap-md items-center justify-between">
+                <div class="flex gap-md flex-1 min-w-[600px]">
+                    <div class="relative flex-1 max-w-sm">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+                        <input name="searchTerm" value="@Context.Request.Query["searchTerm"]"
+                               class="w-full bg-[#F8FAFC] border border-outline-variant h-[44px] pl-9 pr-4 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none font-body-sm text-body-sm"
+                               placeholder="Model adı ile ara..." type="text" />
+                    </div>
+                    <select name="brandId" class="bg-[#F8FAFC] border border-outline-variant h-[44px] px-md rounded-lg font-body-sm text-body-sm outline-none focus:ring-2 focus:ring-primary">
+                        <option value="">Marka Seçin</option>
+                        @foreach (var brand in Model.Brands)
+                        {
+                            <option value="@brand.BrandId">@brand.BrandName</option>
+                        }
+                    </select>
+                    <select name="categoryId" class="bg-[#F8FAFC] border border-outline-variant h-[44px] px-md rounded-lg font-body-sm text-body-sm outline-none focus:ring-2 focus:ring-primary">
+                        <option value="">Kategori Seçin</option>
+                        @foreach (var category in Model.Categories)
+                        {
+                            <option value="@category.CategoryId">@category.CategoryName</option>
+                        }
+                    </select>
+                    <select name="isActive" class="bg-[#F8FAFC] border border-outline-variant h-[44px] px-md rounded-lg font-body-sm text-body-sm outline-none focus:ring-2 focus:ring-primary">
+                        <option value="">Durum</option>
+                        <option value="true">Aktif</option>
+                        <option value="false">Pasif</option>
+                    </select>
+                    <button type="submit" class="flex items-center gap-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors border border-outline-variant px-md py-sm rounded-lg hover:bg-surface-container-low">
+                        <span class="material-symbols-outlined">filter_list</span>
+                        Filtrele
+                    </button>
+                    <a asp-area="Admin" asp-controller="CarModel" asp-action="Index"
+                       class="flex items-center gap-xs font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors border border-outline-variant px-md py-sm rounded-lg hover:bg-surface-container-low">
+                        Temizle
+                    </a>
+                </div>
+            </form>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-[#F8FAFC]">
+                        <tr>
+                            <th class="px-lg py-md font-label-sm text-label-sm text-on-surface-variant uppercase">Model Adı</th>
+                            <th class="px-lg py-md font-label-sm text-label-sm text-on-surface-variant uppercase">Marka</th>
+                            <th class="px-lg py-md font-label-sm text-label-sm text-on-surface-variant uppercase">Kategori</th>
+                            <th class="px-lg py-md font-label-sm text-label-sm text-on-surface-variant uppercase">Yıl Aralığı</th>
+                            <th class="px-lg py-md font-label-sm text-label-sm text-on-surface-variant uppercase">Toplam Araç</th>
+                            <th class="px-lg py-md font-label-sm text-label-sm text-on-surface-variant uppercase">Durum</th>
+                            <th class="px-lg py-md font-label-sm text-label-sm text-on-surface-variant uppercase text-right">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-outline-variant">
+                        @if (!Model.Rows.Any())
+                        {
+                            <tr>
+                                <td colspan="7" class="px-lg py-2xl text-center text-on-surface-variant">Bu kriterlere uygun model bulunmuyor.</td>
+                            </tr>
+                        }
+                        @foreach (var row in Model.Rows)
+                        {
+                            <tr class="hover:bg-[#F8FAFC] transition-colors group">
+                                <td class="px-lg py-lg">
+                                    <div class="flex items-center gap-md">
+                                        <div class="w-16 h-10 bg-surface-container rounded border border-outline-variant overflow-hidden shrink-0 flex items-center justify-center">
+                                            @if (!string.IsNullOrEmpty(row.ImageUrl))
+                                            {
+                                                <img class="w-full h-full object-cover" src="@row.ImageUrl" alt="@row.ModelName" />
+                                            }
+                                            else
+                                            {
+                                                <span class="material-symbols-outlined text-outline text-[18px]">directions_car</span>
+                                            }
+                                        </div>
+                                        <span class="font-label-md text-label-md">@row.ModelName</span>
+                                    </div>
+                                </td>
+                                <td class="px-lg py-lg font-body-sm text-body-sm">@row.BrandName</td>
+                                <td class="px-lg py-lg font-body-sm text-body-sm">@row.CategoryDisplay</td>
+                                <td class="px-lg py-lg font-body-sm text-body-sm">@row.YearRangeDisplay</td>
+                                <td class="px-lg py-lg font-label-md text-label-md">@row.CarCount Araç</td>
+                                <td class="px-lg py-lg">
+                                    @if (row.IsActive)
+                                    {
+                                        <span class="bg-[#22C55E]/10 text-[#22C55E] px-sm py-1 rounded-full text-[12px] font-bold">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="bg-on-surface-variant/10 text-on-surface-variant px-sm py-1 rounded-full text-[12px] font-bold">Pasif</span>
+                                    }
+                                </td>
+                                <td class="px-lg py-lg text-right">
+                                    <div class="flex items-center justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <a asp-area="Admin" asp-controller="CarModel" asp-action="Edit" asp-route-id="@row.CarModelId"
+                                           class="w-8 h-8 rounded bg-surface-container hover:bg-primary/10 hover:text-primary transition-colors flex items-center justify-center">
+                                            <span class="material-symbols-outlined text-md">edit</span>
+                                        </a>
+                                        <form asp-area="Admin" asp-controller="CarModel" asp-action="Delete" asp-route-id="@row.CarModelId" method="post"
+                                              onsubmit="return confirm('Bu modeli silmek istediğinize emin misiniz?');" class="inline">
+                                            <button type="submit" class="w-8 h-8 rounded bg-surface-container hover:bg-error/10 hover:text-error transition-colors flex items-center justify-center">
+                                                <span class="material-symbols-outlined text-md">delete</span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="p-lg bg-[#F8FAFC] border-t border-outline-variant flex items-center justify-between">
+                <p class="font-label-sm text-label-sm text-on-surface-variant">
+                    @Model.TotalModelCount modelden
+                    @(((Model.CurrentPage - 1) * Model.PageSize) + 1)-@(Math.Min(Model.CurrentPage * Model.PageSize, Model.TotalModelCount)) arası gösteriliyor
+                </p>
+                <div class="flex items-center gap-xs">
+                    <a asp-area="Admin" asp-controller="CarModel" asp-action="Index"
+                       asp-route-page="@(Model.CurrentPage - 1)"
+                       asp-route-searchTerm="@Context.Request.Query["searchTerm"]"
+                       asp-route-brandId="@Context.Request.Query["brandId"]"
+                       asp-route-categoryId="@Context.Request.Query["categoryId"]"
+                       asp-route-isActive="@Context.Request.Query["isActive"]"
+                       class="w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface-variant hover:border-primary hover:text-primary transition-all @(Model.CurrentPage <= 1 ? "opacity-50 pointer-events-none" : "")">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </a>
+
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <a asp-area="Admin" asp-controller="CarModel" asp-action="Index"
+                           asp-route-page="@i"
+                           asp-route-searchTerm="@Context.Request.Query["searchTerm"]"
+                           asp-route-brandId="@Context.Request.Query["brandId"]"
+                           asp-route-categoryId="@Context.Request.Query["categoryId"]"
+                           asp-route-isActive="@Context.Request.Query["isActive"]"
+                           class="w-9 h-9 flex items-center justify-center rounded-lg font-label-md text-label-md transition-all @(i == Model.CurrentPage ? "bg-primary text-white shadow-sm" : "border border-outline-variant bg-surface-container-lowest text-on-surface-variant hover:border-primary hover:text-primary")">
+                            @i
+                        </a>
+                    }
+
+                    <a asp-area="Admin" asp-controller="CarModel" asp-action="Index"
+                       asp-route-page="@(Model.CurrentPage + 1)"
+                       asp-route-searchTerm="@Context.Request.Query["searchTerm"]"
+                       asp-route-brandId="@Context.Request.Query["brandId"]"
+                       asp-route-categoryId="@Context.Request.Query["categoryId"]"
+                       asp-route-isActive="@Context.Request.Query["isActive"]"
+                       class="w-9 h-9 flex items-center justify-center rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface-variant hover:border-primary hover:text-primary transition-all @(Model.CurrentPage >= Model.TotalPages ? "opacity-50 pointer-events-none" : "")">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

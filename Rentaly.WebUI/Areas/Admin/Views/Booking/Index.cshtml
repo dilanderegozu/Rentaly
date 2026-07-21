@@ -1,0 +1,226 @@
+﻿@model Rentaly.WebUI.Areas.Admin.Models.BookingListViewModel
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .status-badge-confirmed {
+        background-color: #22c55e;
+        color: white;
+    }
+
+    .status-badge-ongoing {
+        background-color: #4b41e1;
+        color: white;
+    }
+
+    .status-badge-completed {
+        background-color: #6d7b6c;
+        color: white;
+    }
+
+    .status-badge-cancelled {
+        background-color: #ba1a1a;
+        color: white;
+    }
+</style>
+
+<main class="ml-[280px] pt-[64px] min-h-screen p-xl flex flex-col gap-xl">
+    <section class="flex flex-col md:flex-row md:items-center justify-between gap-md">
+        <div>
+            <h1 class="text-h1 font-h1 text-on-surface">Rezervasyon Yönetimi</h1>
+            <p class="text-body-md font-body-md text-on-surface-variant mt-xs">Aktif ve geçmiş kiralamaları yönetin.</p>
+        </div>
+    </section>
+
+    <!-- KPI Widgets -->
+    <section class="grid grid-cols-1 md:grid-cols-4 gap-lg">
+        <div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant">
+            <p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">TOPLAM REZERVASYON</p>
+            <h3 class="text-display font-display mt-sm">@Model.TotalBookingCount</h3>
+        </div>
+        <div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant">
+            <p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">AKTİF KİRALAMALAR</p>
+            <h3 class="text-display font-display mt-sm">@Model.ActiveRentalCount</h3>
+        </div>
+        <div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant">
+            <p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">GELECEK REZERVASYONLAR</p>
+            <h3 class="text-display font-display mt-sm">@Model.UpcomingCount</h3>
+        </div>
+        <div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant">
+            <p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wider">İPTAL ORANI</p>
+            <h3 class="text-display font-display mt-sm">@Model.CancellationRatePercent%</h3>
+        </div>
+    </section>
+
+    <!-- Filter Bar -->
+    <form asp-area="Admin" asp-controller="Booking" asp-action="Index" method="get"
+          class="bg-surface-container-lowest p-md rounded-xl border border-outline-variant flex flex-wrap gap-md items-end">
+        <div class="flex flex-col gap-xs flex-1 min-w-[200px]">
+            <label class="text-label-sm font-label-sm text-on-surface-variant px-xs">Şube</label>
+            <select name="branchId" class="h-11 px-md rounded-lg border border-outline-variant bg-surface-container-lowest text-body-sm outline-none focus:border-primary">
+                <option value="">Tüm Şubeler</option>
+                @foreach (var branch in Model.Branches)
+                {
+                    <option value="@branch.BranchId">@branch.BranchName</option>
+                }
+            </select>
+        </div>
+        <div class="flex flex-col gap-xs flex-1 min-w-[200px]">
+            <label class="text-label-sm font-label-sm text-on-surface-variant px-xs">Durum</label>
+            <select name="status" class="h-11 px-md rounded-lg border border-outline-variant bg-surface-container-lowest text-body-sm outline-none focus:border-primary">
+                <option value="">Tüm Durumlar</option>
+                <option value="Confirmed">Onaylandı</option>
+                <option value="Ongoing">Devam Ediyor</option>
+                <option value="Completed">Tamamlandı</option>
+                <option value="Cancelled">İptal Edildi</option>
+            </select>
+        </div>
+        <button type="submit" class="h-11 px-lg border border-outline-variant rounded-lg font-bold text-label-md flex items-center gap-sm hover:bg-surface-container-low transition-colors">
+            <span class="material-symbols-outlined">filter_list</span>
+            Filtrele
+        </button>
+        <a asp-area="Admin" asp-controller="Booking" asp-action="Index"
+           class="h-11 px-lg border border-outline-variant rounded-lg font-bold text-label-md flex items-center gap-sm hover:bg-surface-container-low transition-colors">
+            Temizle
+        </a>
+    </form>
+
+    <!-- Reservation Table -->
+    <section class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-surface-container-low border-b border-outline-variant">
+                        <th class="text-left py-md px-lg text-label-sm font-label-sm text-on-surface-variant uppercase">ID</th>
+                        <th class="text-left py-md px-lg text-label-sm font-label-sm text-on-surface-variant uppercase">Müşteri</th>
+                        <th class="text-left py-md px-lg text-label-sm font-label-sm text-on-surface-variant uppercase">Araç</th>
+                        <th class="text-left py-md px-lg text-label-sm font-label-sm text-on-surface-variant uppercase">Tarih Aralığı</th>
+                        <th class="text-right py-md px-lg text-label-sm font-label-sm text-on-surface-variant uppercase">Toplam Tutar</th>
+                        <th class="text-center py-md px-lg text-label-sm font-label-sm text-on-surface-variant uppercase">Durum</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant">
+                    @if (!Model.Rows.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="py-2xl px-lg text-center text-on-surface-variant">Bu kriterlere uygun rezervasyon bulunmuyor.</td>
+                        </tr>
+                    }
+                    @foreach (var row in Model.Rows)
+                    {
+                        var initials = string.Join("", row.CustomerName.Split(' ').Select(p => p.Length > 0 ? p[0] : ' ')).ToUpper();
+
+                        <tr class="hover:bg-surface-container-low transition-colors">
+                            <td class="py-md px-lg text-label-md font-label-md">
+                                <a asp-area="Admin" asp-controller="Booking" asp-action="Details" asp-route-id="@row.BookingId"
+                                   class="text-primary font-bold hover:underline">
+                                    #REZ-@row.BookingId.ToString("D4")
+                                </a>
+                            </td>
+                            <td class="py-md px-lg">
+                                <div class="flex items-center gap-md">
+                                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-label-sm">@initials</div>
+                                    <span class="text-body-sm font-bold">@row.CustomerName</span>
+                                </div>
+                            </td>
+                            <td class="py-md px-lg">
+                                <div class="flex flex-col">
+                                    <span class="text-body-sm font-bold">@row.CarName</span>
+                                    <span class="text-label-sm text-on-surface-variant">@row.CarCategoryDisplay • @row.CarYear</span>
+                                </div>
+                            </td>
+                            <td class="py-md px-lg">
+                                <div class="flex flex-col">
+                                    <span class="text-body-sm">@row.PickUpDate.ToString("dd MMM") - @row.DropOffDate.ToString("dd MMM")</span>
+                                    <span class="text-label-sm text-on-surface-variant">@row.DayCount Gün</span>
+                                </div>
+                            </td>
+                            <td class="py-md px-lg text-right font-bold text-body-sm">@row.TotalPrice.ToString("C0")</td>
+                            <td class="py-md px-lg text-center">
+                                <span class="@row.StatusCssClass px-md py-xs rounded-full text-label-sm font-label-sm">@row.StatusText</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (Model.TotalPages > 1)
+        {
+            <div class="px-lg py-md border-t border-outline-variant flex items-center justify-between">
+                <p class="text-label-sm text-on-surface-variant">
+                    Toplam @Model.TotalBookingCount rezervasyondan
+                    @(((Model.CurrentPage - 1) * Model.PageSize) + 1)-@(Math.Min(Model.CurrentPage * Model.PageSize, Model.TotalBookingCount)) arası gösteriliyor
+                </p>
+                <div class="flex gap-sm">
+                    <a asp-area="Admin" asp-controller="Booking" asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)"
+                       asp-route-branchId="@Context.Request.Query["branchId"]" asp-route-status="@Context.Request.Query["status"]"
+                       class="w-10 h-10 border border-outline-variant rounded-lg flex items-center justify-center @(Model.CurrentPage <= 1 ? "opacity-50 pointer-events-none" : "")">
+                        <span class="material-symbols-outlined">chevron_left</span>
+                    </a>
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <a asp-area="Admin" asp-controller="Booking" asp-action="Index" asp-route-page="@i"
+                           asp-route-branchId="@Context.Request.Query["branchId"]" asp-route-status="@Context.Request.Query["status"]"
+                           class="w-10 h-10 rounded-lg flex items-center justify-center font-bold @(i == Model.CurrentPage ? "bg-primary-container text-on-primary" : "border border-outline-variant hover:bg-surface-container-low")">
+                            @i
+                        </a>
+                    }
+                    <a asp-area="Admin" asp-controller="Booking" asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)"
+                       asp-route-branchId="@Context.Request.Query["branchId"]" asp-route-status="@Context.Request.Query["status"]"
+                       class="w-10 h-10 border border-outline-variant rounded-lg flex items-center justify-center @(Model.CurrentPage >= Model.TotalPages ? "opacity-50 pointer-events-none" : "")">
+                        <span class="material-symbols-outlined">chevron_right</span>
+                    </a>
+                </div>
+            </div>
+        }
+    </section>
+
+    <!-- Bottom Insights -->
+    <section class="grid grid-cols-1 md:grid-cols-12 gap-lg pb-xl">
+        <div class="md:col-span-8 bg-surface-container-lowest p-lg rounded-xl border border-outline-variant">
+            <h3 class="text-h3 font-h3 mb-lg">Popüler Teslimat Noktaları</h3>
+            <div class="space-y-md">
+                @if (!Model.TopDropOffPoints.Any())
+                {
+                    <p class="text-on-surface-variant text-body-sm">Henüz yeterli veri yok.</p>
+                }
+                @foreach (var point in Model.TopDropOffPoints)
+                {
+                    <div class="flex items-center gap-md">
+                        <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary">location_on</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-center">
+                                <span class="text-body-sm font-bold">@point.BranchName</span>
+                                <span class="text-label-sm font-bold">%@point.Percent</span>
+                            </div>
+                            <div class="w-full h-2 bg-surface-container-high rounded-full mt-xs">
+                                <div class="h-full bg-primary rounded-full" style="width: @point.Percent%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="md:col-span-4 bg-primary text-on-primary p-lg rounded-xl border border-primary flex flex-col justify-between relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+            <div class="z-10">
+                <h3 class="text-h3 font-h3 mb-sm">Filo Durumu</h3>
+                <p class="text-body-sm opacity-80 mb-lg">Şu anki filo kullanım oranınız.</p>
+            </div>
+            <div class="z-10 bg-white/20 backdrop-blur-md rounded-lg p-md">
+                <div class="flex justify-between items-center mb-xs">
+                    <span class="text-label-sm uppercase tracking-wider font-bold">Kullanım</span>
+                    <span class="text-label-sm font-bold">@Model.FleetUsagePercent%</span>
+                </div>
+                <div class="w-full h-2 bg-white/30 rounded-full">
+                    <div class="h-full bg-white rounded-full" style="width: @Model.FleetUsagePercent%;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>

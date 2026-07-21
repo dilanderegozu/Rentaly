@@ -1,4 +1,5 @@
-﻿using Rentaly.DataAccessLayer.Abstract;
+﻿using Microsoft.EntityFrameworkCore;
+using Rentaly.DataAccessLayer.Abstract;
 using Rentaly.DataAccessLayer.Concrete;
 using Rentaly.DataAccessLayer.RepositoryDesignPattern;
 using Rentaly.EntityLayer.Entities;
@@ -14,6 +15,14 @@ namespace Rentaly.DataAccessLayer.EntityFramework
     {
         public EfCarModelDal(RentalyContext context) : base(context)
         {
+        }
+        public async Task<List<CarModel>> TGetListAsync()
+        {
+            return await _context.CarModels
+                .Include(m => m.Brand)
+                .Include(m => m.Cars)
+                    .ThenInclude(c => c.Category)
+                .ToListAsync();
         }
     }
 }

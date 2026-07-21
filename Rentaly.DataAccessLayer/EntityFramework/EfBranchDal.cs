@@ -1,12 +1,8 @@
-﻿using Rentaly.DataAccessLayer.Abstract;
+﻿using Microsoft.EntityFrameworkCore;
+using Rentaly.DataAccessLayer.Abstract;
 using Rentaly.DataAccessLayer.Concrete;
 using Rentaly.DataAccessLayer.RepositoryDesignPattern;
 using Rentaly.EntityLayer.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rentaly.DataAccessLayer.EntityFramework
 {
@@ -14,6 +10,13 @@ namespace Rentaly.DataAccessLayer.EntityFramework
     {
         public EfBranchDal(RentalyContext context) : base(context)
         {
+        }
+
+        public async Task<List<Branch>> TGetListAsync()
+        {
+            return await _context.Branches
+                .Include(b => b.Cars)
+                .ToListAsync();
         }
     }
 }

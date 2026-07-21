@@ -1,0 +1,54 @@
+﻿@model Rentaly.WebUI.Areas.Admin.Models.BranchFormViewModel
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<main class="ml-[280px] pt-[64px] p-xl">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="font-h1 text-h1 text-on-surface mb-xs">Yeni Şube Ekle</h1>
+        <p class="font-body-md text-on-surface-variant mb-2xl">Filonuza yeni bir operasyon noktası tanımlayın.</p>
+
+        <form asp-area="Admin" asp-controller="Branch" asp-action="CreateBranch" method="post">
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-2xl p-xl space-y-lg">
+                <div class="space-y-2">
+                    <label class="font-label-md text-on-surface">Şube Adı <span class="text-primary">*</span></label>
+                    <input asp-for="Branch.BranchName" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus" placeholder="Örn: İstanbul Havalimanı" type="text" />
+                </div>
+
+                <div class="space-y-2">
+                    <label class="font-label-md text-on-surface">Şehir <span class="text-primary">*</span></label>
+                    <input asp-for="Branch.City" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus" placeholder="Örn: İstanbul" type="text" />
+                </div>
+
+                <div class="space-y-2">
+                    <label class="font-label-md text-on-surface">Adres</label>
+                    <input asp-for="Branch.Address" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus" placeholder="Örn: Terminal 2" type="text" />
+                </div>
+
+                <div class="space-y-2">
+                    <label class="font-label-md text-on-surface">Yönetici Adı</label>
+                    <input asp-for="Branch.ManagerName" class="w-full h-11 px-4 rounded-lg border border-outline-variant form-input-focus" placeholder="Örn: Caner Bakır" type="text" />
+                </div>
+
+                <div class="flex items-center justify-between py-2">
+                    <div>
+                        <p class="font-label-md text-on-surface font-bold">Şube Açık</p>
+                        <p class="font-label-sm text-on-surface-variant">Rezervasyona açık mı?</p>
+                    </div>
+                    <input asp-for="Branch.IsOpen" type="checkbox" class="w-5 h-5" checked />
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-md mt-xl">
+                <a asp-area="Admin" asp-controller="Branch" asp-action="Index"
+                   class="px-xl py-3 rounded-xl border border-outline-variant text-on-surface font-label-md hover:bg-surface-container-low transition-all">
+                    İptal
+                </a>
+                <button type="submit" class="bg-[#22C55E] hover:bg-[#16A34A] text-white px-xl py-3 rounded-xl font-label-md flex items-center gap-2 transition-all shadow-sm active:scale-95">
+                    <span class="material-symbols-outlined text-[20px]">check_circle</span>
+                    Şubeyi Kaydet
+                </button>
+            </div>
+        </form>
+    </div>
+</main>

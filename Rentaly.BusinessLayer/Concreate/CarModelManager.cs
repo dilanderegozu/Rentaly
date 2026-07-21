@@ -28,9 +28,9 @@ namespace Rentaly.Businesslayer.Concreate
            return await _carModelDal.GetByIdAsync(id);
         }
 
-        public Task<List<CarModel>> TGetListAsync()
+        public async Task<List<CarModel>> TGetListAsync()
         {
-           return _carModelDal.GetListAsync();
+            return await _carModelDal.TGetListAsync();  
         }
 
         public async Task TInsertAsync(CarModel entity)

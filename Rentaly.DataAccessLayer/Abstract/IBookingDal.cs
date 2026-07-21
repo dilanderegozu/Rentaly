@@ -8,5 +8,7 @@ namespace Rentaly.DataAccessLayer.Abstract
     public interface IBookingDal:IGenericDal<Booking>
     {
         Task<Booking> GetBookingWithDetailsByIdAsync(int id);
+     
+        Task<Booking> GetDetailsByIdAsync(int id);
     }
 }

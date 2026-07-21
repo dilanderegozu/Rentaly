@@ -44,7 +44,11 @@ namespace Rentaly.DataAccessLayer.Concrete
                 .WithMany()
                 .HasForeignKey(b => b.DropOffBranchId)
                 .OnDelete(DeleteBehavior.Restrict);
-
+            modelBuilder.Entity<CarModel>()
+    .HasOne(cm => cm.Brand)
+    .WithMany()
+    .HasForeignKey(cm => cm.BrandId)
+    .OnDelete(DeleteBehavior.Restrict);
             base.OnModelCreating(modelBuilder);
         }
     }

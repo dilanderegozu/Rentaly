@@ -29,5 +29,15 @@ namespace Rentaly.DataAccessLayer.EntityFramework
         {
             throw new NotImplementedException();
         }
+        public async Task<Booking> GetDetailsByIdAsync(int id)
+        {
+            return await _context.Bookings
+                .Include(b => b.Car).ThenInclude(c => c.Brand)
+                .Include(b => b.Car).ThenInclude(c => c.CarModel)
+                .Include(b => b.Car).ThenInclude(c => c.Category)
+                .Include(b => b.PickUpBranch)
+                .Include(b => b.DropOffBranch)
+                .FirstOrDefaultAsync(b => b.BookingId == id);
+        }
     }
 }

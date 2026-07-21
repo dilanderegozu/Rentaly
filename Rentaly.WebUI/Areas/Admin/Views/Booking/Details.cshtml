@@ -1,0 +1,107 @@
+﻿@model Rentaly.EntityLayer.Entities.Booking
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var now = DateTime.Now;
+    var days = Math.Max(1, (Model.DropOffDate.Date - Model.PickUpDate.Date).Days);
+
+    string statusText, statusClass;
+    if (Model.Status == "Cancelled") { statusText = "İptal Edildi"; statusClass = "status-badge-cancelled"; }
+    else if (Model.PickUpDate <= now && Model.DropOffDate >= now) { statusText = "Devam Ediyor"; statusClass = "status-badge-ongoing"; }
+    else if (Model.DropOffDate < now) { statusText = "Tamamlandı"; statusClass = "status-badge-completed"; }
+    else { statusText = "Onaylandı"; statusClass = "status-badge-confirmed"; }
+}
+
+<style>
+    .status-badge-confirmed {
+        background-color: #22c55e;
+        color: white;
+    }
+
+    .status-badge-ongoing {
+        background-color: #4b41e1;
+        color: white;
+    }
+
+    .status-badge-completed {
+        background-color: #6d7b6c;
+        color: white;
+    }
+
+    .status-badge-cancelled {
+        background-color: #ba1a1a;
+        color: white;
+    }
+</style>
+
+<main class="ml-[280px] pt-[64px] min-h-screen p-xl">
+    <div class="max-w-3xl mx-auto">
+        <nav class="flex items-center gap-xs text-label-sm text-on-surface-variant mb-md">
+            <a asp-area="Admin" asp-controller="Booking" asp-action="Index" class="hover:text-primary transition-colors">Rezervasyon Yönetimi</a>
+            <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+            <span class="text-on-surface">#REZ-@Model.BookingId.ToString("D4")</span>
+        </nav>
+
+        <div class="flex justify-between items-start mb-2xl">
+            <div>
+                <h1 class="text-h1 font-h1 text-on-surface">Rezervasyon #REZ-@Model.BookingId.ToString("D4")</h1>
+                <p class="text-body-md text-on-surface-variant mt-xs">@Model.CustomerName tarafından oluşturuldu</p>
+            </div>
+            <span class="@statusClass px-md py-sm rounded-full text-label-md font-bold">@statusText</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-xl">
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg">
+                <h3 class="font-h3 text-h3 mb-md">Araç Bilgileri</h3>
+                <div class="flex items-center gap-md mb-md">
+                    <img src="@Model.Car?.ImageUrl" class="w-20 h-14 object-cover rounded-lg border border-outline-variant" alt="@Model.Car?.Brand?.BrandName" />
+                    <div>
+                        <p class="font-bold text-body-md">@Model.Car?.Brand?.BrandName @Model.Car?.CarModel?.ModelName</p>
+                        <p class="text-label-sm text-on-surface-variant">@Model.Car?.Category?.CategoryName • @Model.Car?.Year</p>
+                    </div>
+                </div>
+                <p class="text-body-sm text-on-surface-variant">Plaka: @Model.Car?.PlateNumber</p>
+            </div>
+
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg">
+                <h3 class="font-h3 text-h3 mb-md">Müşteri Bilgileri</h3>
+                <p class="text-body-sm mb-xs"><strong>Ad Soyad:</strong> @Model.CustomerName</p>
+                <p class="text-body-sm mb-xs"><strong>E-posta:</strong> @Model.CustomerEmail</p>
+                <p class="text-body-sm"><strong>Telefon:</strong> @Model.CustomerPhone</p>
+            </div>
+
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg">
+                <h3 class="font-h3 text-h3 mb-md">Tarih ve Şube</h3>
+                <p class="text-body-sm mb-xs"><strong>Alış:</strong> @Model.PickUpDate.ToString("dd MMMM yyyy, HH:mm") — @Model.PickUpBranch?.BranchName</p>
+                <p class="text-body-sm mb-xs"><strong>Teslim:</strong> @Model.DropOffDate.ToString("dd MMMM yyyy, HH:mm") — @Model.DropOffBranch?.BranchName</p>
+                <p class="text-body-sm"><strong>Süre:</strong> @days gün</p>
+            </div>
+
+            <div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg">
+                <h3 class="font-h3 text-h3 mb-md">Ödeme</h3>
+                <p class="text-h2 font-h2 text-primary">@Model.TotalPrice.ToString("C0")</p>
+                @if (!string.IsNullOrWhiteSpace(Model.Notes))
+                {
+                    <p class="text-body-sm text-on-surface-variant mt-md"><strong>Not:</strong> @Model.Notes</p>
+                }
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center mt-2xl">
+            <a asp-area="Admin" asp-controller="Booking" asp-action="Index"
+               class="px-xl py-3 rounded-xl border border-outline-variant text-on-surface font-label-md hover:bg-surface-container-low transition-all">
+                Listeye Dön
+            </a>
+
+            @if (statusText != "İptal Edildi" && statusText != "Tamamlandı")
+            {
+                <form asp-area="Admin" asp-controller="Booking" asp-action="Cancel" asp-route-id="@Model.BookingId" method="post"
+                      onsubmit="return confirm('Bu rezervasyonu iptal etmek istediğinize emin misiniz?');">
+                    <button type="submit" class="px-xl py-3 rounded-xl bg-error/10 text-error font-label-md hover:bg-error/20 transition-all flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">cancel</span>
+                        Rezervasyonu İptal Et
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+</main>

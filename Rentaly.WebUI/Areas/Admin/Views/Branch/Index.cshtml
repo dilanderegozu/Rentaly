@@ -1,0 +1,165 @@
+﻿@model Rentaly.WebUI.Areas.Admin.Models.BranchListViewModel
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<main class="ml-[280px] pt-[64px] p-xl">
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-2xl gap-md">
+        <div>
+            <h2 class="font-h1 text-h1 text-on-surface mb-xs">Şube Yönetimi</h2>
+            <p class="font-body-md text-body-md text-on-surface-variant">Operasyonel noktalarınızı ve şube performanslarını takip edin.</p>
+        </div>
+        <a asp-area="Admin" asp-controller="Branch" asp-action="CreateBranch"
+           class="flex items-center gap-sm bg-primary-container text-on-primary px-lg py-md rounded-xl hover:bg-[#16A34A] transition-all shadow-sm active:scale-95">
+            <span class="material-symbols-outlined">add</span>
+            <span class="font-label-md text-label-md">Yeni Şube Ekle</span>
+        </a>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-lg mb-2xl">
+        <div class="bg-surface-container-lowest border border-outline-variant p-xl rounded-xl">
+            <span class="material-symbols-outlined text-primary bg-primary/10 p-sm rounded-lg inline-block mb-md">store</span>
+            <p class="text-on-surface-variant font-label-md text-label-md mb-xs">Toplam Şube</p>
+            <p class="font-display text-display">@Model.TotalBranchCount</p>
+        </div>
+        <div class="bg-surface-container-lowest border border-outline-variant p-xl rounded-xl">
+            <span class="material-symbols-outlined text-secondary bg-secondary/10 p-sm rounded-lg inline-block mb-md">directions_car</span>
+            <p class="text-on-surface-variant font-label-md text-label-md mb-xs">Filo Dağılımı</p>
+            <p class="font-display text-display">@Model.TotalFleetCount</p>
+        </div>
+        <div class="bg-surface-container-lowest border border-outline-variant p-xl rounded-xl">
+            <span class="material-symbols-outlined text-tertiary bg-tertiary/10 p-sm rounded-lg inline-block mb-md">key</span>
+            <p class="text-on-surface-variant font-label-md text-label-md mb-xs">Aktif Kiralamalar</p>
+            <p class="font-display text-display">@Model.TotalActiveRentalCount</p>
+        </div>
+    </div>
+
+    <!-- Branch Table -->
+    <div class="bg-surface-container-lowest border border-outline-variant rounded-2xl overflow-hidden shadow-sm">
+        <div class="px-xl py-lg border-b border-outline-variant flex justify-between items-center bg-surface-container-low/30">
+            <h3 class="font-h3 text-h3">Şube Listesi</h3>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-surface-container-low/50">
+                        <th class="px-xl py-md font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Şube Adı</th>
+                        <th class="px-xl py-md font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Lokasyon / Şehir</th>
+                        <th class="px-xl py-md font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Yönetici</th>
+                        <th class="px-xl py-md font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Top. Araç</th>
+                        <th class="px-xl py-md font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Aktif Kiralama</th>
+                        <th class="px-xl py-md font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Durum</th>
+                        <th class="px-xl py-md font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-right">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant">
+                    @if (!Model.Rows.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="px-xl py-2xl text-center text-on-surface-variant">Henüz şube eklenmemiş.</td>
+                        </tr>
+                    }
+                    @foreach (var row in Model.Rows)
+                    {
+                        var percent = row.TotalCarCount > 0 ? Math.Round((double)row.ActiveRentalCount / row.TotalCarCount * 100) : 0;
+                        var initials = string.Join("", (row.ManagerName ?? "?").Split(' ').Select(p => p.Length > 0 ? p[0] : ' ')).ToUpper();
+
+                        <tr class="hover:bg-surface-container-low transition-colors @(row.IsOpen ? "" : "opacity-60")">
+                            <td class="px-xl py-lg">
+                                <div class="flex items-center gap-md">
+                                    <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-primary">store</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-label-md text-label-md font-bold">@row.BranchName</p>
+                                        <p class="text-body-sm text-on-surface-variant">@row.Address</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-xl py-lg font-body-md text-body-md">@row.City</td>
+                            <td class="px-xl py-lg">
+                                @if (!string.IsNullOrEmpty(row.ManagerName))
+                                {
+                                    <div class="flex items-center gap-sm">
+                                        <div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed-variant text-[11px] font-bold">@initials</div>
+                                        <span class="font-body-md text-body-md">@row.ManagerName</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="text-on-surface-variant font-body-sm">Atanmamış</span>
+                                }
+                            </td>
+                            <td class="px-xl py-lg font-body-md text-body-md">@row.TotalCarCount</td>
+                            <td class="px-xl py-lg">
+                                <div class="w-full bg-surface-container rounded-full h-1.5 mb-1.5 max-w-[80px]">
+                                    <div class="bg-primary h-1.5 rounded-full" style="width: @percent%"></div>
+                                </div>
+                                <span class="text-body-sm font-medium">@row.ActiveRentalCount Kiralama</span>
+                            </td>
+                            <td class="px-xl py-lg">
+                                @if (row.IsOpen)
+                                {
+                                    <span class="inline-flex items-center px-sm py-xs rounded-full bg-primary/10 text-primary font-label-sm text-label-sm">
+                                        <span class="w-2 h-2 rounded-full bg-primary mr-sm"></span>
+                                        Açık
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="inline-flex items-center px-sm py-xs rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm">
+                                        <span class="w-2 h-2 rounded-full bg-error mr-sm"></span>
+                                        Kapalı
+                                    </span>
+                                }
+                            </td>
+                            <td class="px-xl py-lg text-right">
+                                <div class="flex justify-end gap-sm">
+                                    <a asp-area="Admin" asp-controller="Branch" asp-action="EditBranch" asp-route-id="@row.BranchId"
+                                       class="text-on-surface-variant hover:text-primary transition-colors">
+                                        <span class="material-symbols-outlined text-[20px]">edit</span>
+                                    </a>
+                                    <form asp-area="Admin" asp-controller="Branch" asp-action="DeleteBranch" asp-route-id="@row.BranchId" method="post"
+                                          onsubmit="return confirm('Bu şubeyi silmek istediğinize emin misiniz?');" class="inline">
+                                        <button type="submit" class="text-on-surface-variant hover:text-error transition-colors">
+                                            <span class="material-symbols-outlined text-[20px]">delete</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (Model.TotalPages > 1)
+        {
+            <div class="px-xl py-md bg-surface-container-low/30 border-t border-outline-variant flex justify-between items-center">
+                <span class="text-body-sm text-on-surface-variant">
+                    @Model.TotalBranchCount şubeden
+                    @(((Model.CurrentPage - 1) * Model.PageSize) + 1)-@(Math.Min(Model.CurrentPage * Model.PageSize, Model.TotalBranchCount)) arası gösteriliyor
+                </span>
+                <div class="flex gap-xs">
+                    <a asp-area="Admin" asp-controller="Branch" asp-action="Index" asp-route-page="@(Model.CurrentPage - 1)"
+                       class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low @(Model.CurrentPage <= 1 ? "opacity-50 pointer-events-none" : "")">
+                        <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                    </a>
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <a asp-area="Admin" asp-controller="Branch" asp-action="Index" asp-route-page="@i"
+                           class="w-8 h-8 flex items-center justify-center rounded font-label-sm @(i == Model.CurrentPage ? "border border-primary bg-primary text-white" : "border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low")">
+                            @i
+                        </a>
+                    }
+                    <a asp-area="Admin" asp-controller="Branch" asp-action="Index" asp-route-page="@(Model.CurrentPage + 1)"
+                       class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant bg-surface-container-lowest hover:bg-surface-container-low @(Model.CurrentPage >= Model.TotalPages ? "opacity-50 pointer-events-none" : "")">
+                        <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</main>
